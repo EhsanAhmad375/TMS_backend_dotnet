@@ -22,7 +22,13 @@ namespace TMS.src
         public string? client_contact{get;set;}
         public string? client_company{get;set;}
         public string? trip_type{get;set;} // import | export | local
+        public int? TripStatusId { get; set; }
+
+// 2. The Navigation Property
+        [ForeignKey("TripStatusId")]
         public TripStatus? tripStatus{get;set;}
+        
+        
         public string? pickup_location{get;set;}
         public string? destination{get;set;}
         public double? distance_km{get;set;}
@@ -41,18 +47,11 @@ namespace TMS.src
 
 
     public class TripStatus
-    {
-        [Key]
-        public int tripStatusId{get;set;}
-        public int statusName{get;set;}
-        public int tripId{get;set;}
-        [ForeignKey("tripId")]
-        public TripModel trip{get;set;}
-        public int truckId{get;set;}
-        [ForeignKey("truckId")]
-        public TruckModel truck{get;set;}
+{
+    [Key]
+    public int tripStatusId { get; set; }
+    public string statusName { get; set; } = string.Empty; 
+    
 
-
-        
-    }
+}
 }

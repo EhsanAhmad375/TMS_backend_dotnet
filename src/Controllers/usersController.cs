@@ -52,7 +52,8 @@ namespace TMS.src
             }
             try
             {
-                return await _userService.userRegisterService(userRegisterDTO);
+                var user=await _userService.userRegisterService(userRegisterDTO);
+                return StatusCode(201,new{success=true,message="user created successfully",data=user});
             }catch(ApiException ex)
             {
                 return StatusCode(400,new {success=false,error=new Dictionary<string,string>{{ex.FieldName,ex.Message}}});
@@ -61,6 +62,9 @@ namespace TMS.src
                 return StatusCode(500,new {succsee=false,message="internal server error",error=ex.Message});
             }
         }
+
+
+        
 
         
     }

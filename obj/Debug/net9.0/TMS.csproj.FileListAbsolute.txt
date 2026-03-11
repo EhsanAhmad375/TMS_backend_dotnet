@@ -1,3 +1,12 @@
+/Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/Debug/net9.0/TMS.csproj.AssemblyReference.cache
+/Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/Debug/net9.0/rpswa.dswa.cache.json
+/Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/Debug/net9.0/TMS.GeneratedMSBuildEditorConfig.editorconfig
+/Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/Debug/net9.0/TMS.AssemblyInfoInputs.cache
+/Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/Debug/net9.0/TMS.AssemblyInfo.cs
+/Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/Debug/net9.0/TMS.csproj.CoreCompileInputs.cache
+/Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/Debug/net9.0/TMS.MvcApplicationPartsAssemblyInfo.cs
+/Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/Debug/net9.0/TMS.MvcApplicationPartsAssemblyInfo.cache
+/Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/Debug/net9.0/TMS.sourcelink.json
 /Users/ehsanahmad/Documents/dotnet/TMS/TMS/bin/Debug/net9.0/appsettings.Development.json
 /Users/ehsanahmad/Documents/dotnet/TMS/TMS/bin/Debug/net9.0/appsettings.json
 /Users/ehsanahmad/Documents/dotnet/TMS/TMS/bin/Debug/net9.0/TMS.staticwebassets.endpoints.json
@@ -108,14 +117,6 @@
 /Users/ehsanahmad/Documents/dotnet/TMS/TMS/bin/Debug/net9.0/tr/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 /Users/ehsanahmad/Documents/dotnet/TMS/TMS/bin/Debug/net9.0/zh-Hans/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
 /Users/ehsanahmad/Documents/dotnet/TMS/TMS/bin/Debug/net9.0/zh-Hant/Microsoft.CodeAnalysis.Workspaces.MSBuild.BuildHost.resources.dll
-/Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/Debug/net9.0/TMS.csproj.AssemblyReference.cache
-/Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/Debug/net9.0/rpswa.dswa.cache.json
-/Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/Debug/net9.0/TMS.GeneratedMSBuildEditorConfig.editorconfig
-/Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/Debug/net9.0/TMS.AssemblyInfoInputs.cache
-/Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/Debug/net9.0/TMS.AssemblyInfo.cs
-/Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/Debug/net9.0/TMS.csproj.CoreCompileInputs.cache
-/Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/Debug/net9.0/TMS.MvcApplicationPartsAssemblyInfo.cs
-/Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/Debug/net9.0/TMS.MvcApplicationPartsAssemblyInfo.cache
 /Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/Debug/net9.0/rjimswa.dswa.cache.json
 /Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/Debug/net9.0/rjsmrazor.dswa.cache.json
 /Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/Debug/net9.0/rjsmcshtml.dswa.cache.json

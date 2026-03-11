@@ -109,15 +109,45 @@ namespace TMS.src
         public string? type{get;set;}       // owned || outsourced
         public string? status{get;set;} //active || inactive|| in maintenance
         public string? sub_status{get;set;} // available || onroute
-        public Driver driver{get;set;}
+        public Driver? driver{get;set;}
         
     }
+
+
+
+    public class TruckInfoDTO
+    {
+        public int? id{get;set;}
+        public string? plate_number{get;set;}
+        
+        public string? model{get;set;}
+        public string? make{get;set;}
+        public string? year{get;set;}
+        public string? type{get;set;}       // owned || outsourced
+        public string? status{get;set;} //active || inactive|| in maintenance
+        public string? sub_status{get;set;} // available || onroute
+        
+        
+    }
+
+    public class Truck
+    {
+        public int? truck_id{get;set;}
+        public string? plate_number{get;set;}
+        public string? model{get;set;}
+   
+        
+    }
+
 
     public class Driver
     {
         public int? driver_id{get;set;}
         public string? driver_name{get;set;}
         public string? driver_image_url{get;set;}
+        public string? cnic{get;set;}
+        public string? age{get;set;}
+        public string? license_number{get;set;}
     }
 
 }

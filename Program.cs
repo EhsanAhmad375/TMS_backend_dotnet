@@ -15,8 +15,17 @@ var builder = WebApplication.CreateBuilder(args);
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
 // 2. DbContext Configuration
+// 2. DbContext Configuration
 builder.Services.AddDbContext<AppDbContext>(options =>
-    options.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString)));
+{
+    var serverVersion = ServerVersion.AutoDetect(connectionString);
+    options.UseMySql(connectionString, serverVersion, mysqlOptions => 
+        mysqlOptions.EnableRetryOnFailure(
+            maxRetryCount: 10,
+            maxRetryDelay: TimeSpan.FromSeconds(30),
+            errorNumbersToAdd: null
+        ));
+});
 
 
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
@@ -47,6 +56,9 @@ builder.Services.AddScoped<IUserRepo,UserRepo>();
 // Trucks
 builder.Services.AddScoped<ITruckRepo, TruckRepo>();
 builder.Services.AddScoped<ITruckService, TruckService>();
+// Trip
+builder.Services.AddScoped<ITripRepo, TripRepo>();
+builder.Services.AddScoped<ITripService, TripService>();
 
 // builder.Services.AddOpenApi();
 

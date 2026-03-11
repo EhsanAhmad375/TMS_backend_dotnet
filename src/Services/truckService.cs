@@ -26,7 +26,7 @@ namespace TMS.src
   
         public async Task<TruckCreatedDTO> createTruckService(CreateTruckDTO createTruckDTO)
         {
-            var isExistTruck=await _truckRepo.getTruckByNumberPlateRepo(createTruckDTO.plate_number);
+            var isExistTruck=await _truckRepo.getTruckByNumberPlateRepo(createTruckDTO.plate_number!);
             if (isExistTruck != null)
             {
                 throw new ApiException("message",$"this truck {createTruckDTO.plate_number} already exist");
@@ -57,7 +57,7 @@ namespace TMS.src
         public async Task<List<TruckListDTO>> GetAllTruckListService()
         {
         
-            var query=await _truckRepo.getAllTruckRepo();
+            var query= _truckRepo.getAllTruckRepo();
 
             var trucks=query.Select(t=>new TruckListDTO
             {
@@ -70,9 +70,9 @@ namespace TMS.src
                 status=t.status,
                 sub_status=t.sub_status,
                 driver =new Driver{
-                driver_id=t.driver?.userId,
-                driver_name=t.driver?.f_Name+" "+t.driver?.l_Name,
-                driver_image_url=t.driver?.profile_image    
+                driver_id=t.driver.userId,
+                driver_name=t.driver.f_Name+" "+t.driver.l_Name,
+                driver_image_url=t.driver.profile_image    
                 }
                 
 

@@ -6,8 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
-using System.Text;
-using Microsoft.IdentityModel.Tokens;
+
 namespace TMS.src
 {
     public interface IUserService
@@ -32,7 +31,7 @@ namespace TMS.src
 
         public async Task<GetUserRegisterDTo> userRegisterService(UserRegisterDTO userRegisterDTO)
             {
-                var user=await _userRepo.GetUserByEmail(userRegisterDTO.email);
+                var user=await _userRepo.GetUserByEmail(userRegisterDTO.email!);
             if (user != null)
             {
                 throw new ApiException("message","User already exist");
@@ -116,7 +115,7 @@ namespace TMS.src
     var claims = new[]
     {
         new Claim(ClaimTypes.NameIdentifier, user.userId.ToString()),
-        new Claim(ClaimTypes.Email, user.email),
+        new Claim(ClaimTypes.Email, user.email!),
         new Claim(ClaimTypes.Role, user.role ?? "User"),
         new Claim("FirstName", user.f_Name ?? "")
     };

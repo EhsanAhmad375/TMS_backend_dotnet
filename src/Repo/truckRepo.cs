@@ -8,7 +8,7 @@ namespace TMS.src
     public interface ITruckRepo
     {
         Task<TruckModel> createTruckRepo(TruckModel truck);
-        Task<List<TruckModel>> getAllTruckRepo();
+        IQueryable<TruckModel> getAllTruckRepo();
         Task<TruckModel> getTruckByIdRepo(int id);
         Task<TruckModel> getTruckByNumberPlateRepo(string number_plate);
         Task saveChnagesRepo();
@@ -55,9 +55,9 @@ namespace TMS.src
             return truck;
         }
 
-        public async Task<List<TruckModel>> getAllTruckRepo()
+        public  IQueryable<TruckModel> getAllTruckRepo()
         {
-            return await _appDbContext.trucks.Include(t=>t.driver).ToListAsync();
+            return  _appDbContext.trucks.Include(t=>t.driver);
         }
     }
 }

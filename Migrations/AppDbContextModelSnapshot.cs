@@ -111,6 +111,9 @@ namespace TMS.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("tripId"));
 
+                    b.Property<int?>("TripStatusId")
+                        .HasColumnType("int");
+
                     b.Property<DateTime?>("actual_end_time")
                         .HasColumnType("datetime(6)");
 
@@ -179,6 +182,8 @@ namespace TMS.Migrations
 
                     b.HasKey("tripId");
 
+                    b.HasIndex("TripStatusId");
+
                     b.HasIndex("co_driver_id");
 
                     b.HasIndex("driver_id");
@@ -196,21 +201,11 @@ namespace TMS.Migrations
 
                     MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("tripStatusId"));
 
-                    b.Property<int>("statusName")
-                        .HasColumnType("int");
-
-                    b.Property<int>("tripId")
-                        .HasColumnType("int");
-
-                    b.Property<int>("truckId")
-                        .HasColumnType("int");
+                    b.Property<string>("statusName")
+                        .IsRequired()
+                        .HasColumnType("longtext");
 
                     b.HasKey("tripStatusId");
-
-                    b.HasIndex("tripId")
-                        .IsUnique();
-
-                    b.HasIndex("truckId");
 
                     b.ToTable("tripStatuses");
                 });
@@ -426,6 +421,10 @@ namespace TMS.Migrations
 
             modelBuilder.Entity("TMS.src.TripModel", b =>
                 {
+                    b.HasOne("TMS.src.TripStatus", "tripStatus")
+                        .WithMany()
+                        .HasForeignKey("TripStatusId");
+
                     b.HasOne("TMS.src.UserModel", "co_driver")
                         .WithMany()
                         .HasForeignKey("co_driver_id");
@@ -442,24 +441,7 @@ namespace TMS.Migrations
 
                     b.Navigation("driver");
 
-                    b.Navigation("truck");
-                });
-
-            modelBuilder.Entity("TMS.src.TripStatus", b =>
-                {
-                    b.HasOne("TMS.src.TripModel", "trip")
-                        .WithOne("tripStatus")
-                        .HasForeignKey("TMS.src.TripStatus", "tripId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.HasOne("TMS.src.TruckModel", "truck")
-                        .WithMany()
-                        .HasForeignKey("truckId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("trip");
+                    b.Navigation("tripStatus");
 
                     b.Navigation("truck");
                 });
@@ -483,11 +465,6 @@ namespace TMS.Migrations
                     b.Navigation("driver");
 
                     b.Navigation("trip");
-                });
-
-            modelBuilder.Entity("TMS.src.TripModel", b =>
-                {
-                    b.Navigation("tripStatus");
                 });
 #pragma warning restore 612, 618
         }
