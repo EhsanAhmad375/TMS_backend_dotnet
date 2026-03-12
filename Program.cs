@@ -59,7 +59,9 @@ builder.Services.AddScoped<ITruckService, TruckService>();
 // Trip
 builder.Services.AddScoped<ITripRepo, TripRepo>();
 builder.Services.AddScoped<ITripService, TripService>();
-
+//expense
+builder.Services.AddScoped<IExpenseRepo, ExpenseRepo>();
+builder.Services.AddScoped<IExpenseService, ExpenseService>();
 // builder.Services.AddOpenApi();
 
 var app = builder.Build(); 

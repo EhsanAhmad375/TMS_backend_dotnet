@@ -131,3 +131,4 @@
 /Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/Debug/net9.0/TMS.pdb
 /Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/Debug/net9.0/TMS.genruntimeconfig.cache
 /Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/Debug/net9.0/ref/TMS.dll
+/Users/ehsanahmad/Documents/dotnet/TMS/TMS/bin/Debug/net9.0/TMS.staticwebassets.runtime.json

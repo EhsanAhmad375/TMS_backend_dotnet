@@ -6,6 +6,7 @@ namespace TMS.src
     public class ExpenseModel
     {
         [Key]
+        [DatabaseGenerated(DatabaseGeneratedOption.Identity)] // Ye auto-increment karta hai
         public int expenseId{get;set;}
         public int? trip_id{get;set;}
         [ForeignKey("trip_id")]
