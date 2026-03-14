@@ -1,23 +1,25 @@
 # 1. Build Stage
-FROM mcr.microsoft.com/dotnet/sdk:8.0 AS build
+# Yahan 8.0 ki jagah 9.0 kar diya hai
+FROM mcr.microsoft.com/dotnet/sdk:9.0 AS build
 WORKDIR /source
 
-# Copy csproj and restore dependencies
+# Copy files
 COPY *.sln .
 COPY *.csproj ./
 RUN dotnet restore
 
-# Copy everything else and build
+# Build
 COPY . .
 RUN dotnet publish -c Release -o /app
 
 # 2. Runtime Stage
-FROM mcr.microsoft.com/dotnet/aspnet:8.0
+# Yahan bhi 9.0 hona chahiye
+FROM mcr.microsoft.com/dotnet/aspnet:9.0
 WORKDIR /app
 COPY --from=build /app .
 
-# Port expose (Optional but good practice)
+# Render port configuration
 EXPOSE 8080
 
-# Replace 'TMS.dll' with your actual project output dll name
+# Replace 'TMS.dll' with your actual DLL name if it's different
 ENTRYPOINT ["dotnet", "TMS.dll"]
