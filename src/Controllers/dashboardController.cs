@@ -17,7 +17,7 @@ namespace TMS.src
 
 
 
-        [HttpGet("get-dashboard")]
+        [HttpGet("api/get-dashboard")]
         public async Task<ActionResult> getDashboard([FromQuery] string? date)
         {
             try
