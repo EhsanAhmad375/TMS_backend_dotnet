@@ -29,16 +29,20 @@ namespace TMS.src
         }
 
 
-[HttpPost("add-expense")]
-public async Task<ActionResult> addExpense([FromForm] AddExpenseDTO add)
-{
-    try
-    {
+
+
+
+
+        [HttpPost("add-expense")]
+        public async Task<ActionResult> addExpense([FromForm] AddExpenseDTO add)    
+        {
+        try
+        {
         string dbImagePath = null;
 
         // 1. Image Logic
         if (add.receiptImage != null && add.receiptImage.Length > 0) 
-        {
+            {
             // Behtar tareeka: Path direct wwwroot se uthayein
             string rootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
             string uploadsFolder = Path.Combine(rootPath, "uploads");
@@ -81,6 +85,25 @@ public async Task<ActionResult> addExpense([FromForm] AddExpenseDTO add)
         return StatusCode(500, new { success = false, error = ex.Message }); // Temporary actual error dekhein
     }
 }
+
+
+
+
+
+
+        [HttpGet("get-expense-list")]
+        public async Task<IActionResult> getExpenseList()
+        {
+            try
+            {
+                var expense=await _expenseService.getAllExpenseList();
+                return StatusCode(200, new{success=true,message="Expense List Successfully Retrive",data=expense});
+                
+            }catch(Exception ex)
+            {
+                return BadRequest(new {success=false, error=ex.Message});
+            }
+        }
 
     }
 }

@@ -62,6 +62,10 @@ builder.Services.AddScoped<ITripService, TripService>();
 //expense
 builder.Services.AddScoped<IExpenseRepo, ExpenseRepo>();
 builder.Services.AddScoped<IExpenseService, ExpenseService>();
+//dashboard
+builder.Services.AddScoped<IDashboardService,DashboardService>();
+
+
 // builder.Services.AddOpenApi();
 
 var app = builder.Build(); 

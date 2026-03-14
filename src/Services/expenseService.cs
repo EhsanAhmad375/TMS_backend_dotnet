@@ -10,6 +10,7 @@ namespace TMS.src
         Task<List<ExpenseTypeDTO>> expenseType();
         Task<bool> addExpenseService(AddExpenseDTO add,string imageUrl);
         Task validateExpenseIds(AddExpenseDTO add);
+        Task<List<ExpenseListDTO>> getAllExpenseList();
     }
     public class ExpenseService : IExpenseService
     {
@@ -36,39 +37,74 @@ namespace TMS.src
             return expenseTypeList;
         }
 
-// Service ke andar ek helper method banayen
-public async Task validateExpenseIds(AddExpenseDTO add)
+        public async Task validateExpenseIds(AddExpenseDTO add)
 {
-    var isTripExist = await _tripRepo.getTripByIdRepo(add.tripId.Value);
-    var isDriverExist = await _userRepo.GetUserById(add.driverId.Value);
-    var isCoDriverExist = await _userRepo.GetUserById(add.co_driverId.Value);
-    var isExpenseTypeId = await _expenseRepo.GetExpenseCategoryById(add.expensetTypeId.Value);
+    if (add.tripId != null) 
+    {
+        var isTripExist = await _tripRepo.getTripByIdRepo(add.tripId.Value);
+        if (isTripExist == null)
+        {
+            add.tripId = null; 
+        }
+    }
+     if (add.driverId != null)
+    {
+        var isDriverExist = await _userRepo.GetUserById(add.driverId.Value);
+        if (isDriverExist == null)
+        {
+            add.driverId = null;
+        }
+    }
 
-    // 2. Validation Logic
-    if (isTripExist == null)
+    if (add.co_driverId != null)
     {
-        throw new ApiException("tripId", "Trip Id is not found in database");
+        var isCoDriverExist = await _userRepo.GetUserById(add.co_driverId.Value);
+        if (isCoDriverExist == null)
+        {
+            add.co_driverId = null;
+        }
     }
-    if (isDriverExist == null)
+
+    
+    if (add.expensetTypeId != null)
     {
-        throw new ApiException("driverId", "Driver Id is not found in database");
-    }
-    if (isCoDriverExist == null)
-    {
-        throw new ApiException("co_driverId", "Co-Driver Id is not found in database");
-    }
-    if (isExpenseTypeId == null)
-    {
-        throw new ApiException("expensetTypeId", "Expense Type Id is not found in database");
+        var isExpenseTypeExist = await _expenseRepo.GetExpenseCategoryById(add.expensetTypeId.Value);
+        if (isExpenseTypeExist == null)
+        {
+            add.expensetTypeId = null;
+        }
     }
 }
-public async Task<bool> addExpenseService(AddExpenseDTO add, string imageUrl)
+
+        public async Task<bool> addExpenseService(AddExpenseDTO add, string imageUrl)
 {
     await validateExpenseIds(add);
 
     await _expenseRepo.addExpenseRepo(add, imageUrl);
     return true;
 }
+
+        public async Task<List<ExpenseListDTO>> getAllExpenseList()
+        {
+            var expens= _expenseRepo.getAllExpenseList();
+            var expendData=await expens.Select(e=>new ExpenseListDTO
+            {
+                expenseid=e.expenseId,
+                expensetTypeId=e.e_c_id,
+                tripId=e.trip_id,
+                driverId=e.driver_id,
+                co_driverId=e.co_driver_id,
+                amount=e.amount,
+                note=e.notes,
+                date=e.date,
+                receiptImage=e.receipt_url
+
+            }).ToListAsync();
+            
+
+            return expendData; 
+        }
+
 
 
     }

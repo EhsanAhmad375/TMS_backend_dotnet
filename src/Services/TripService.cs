@@ -13,7 +13,7 @@ namespace TMS.src
     {
         Task<TripModel> createTripService(CreateTripDTO createTrip);
 
-        Task<List<GetAllTripsDTO>> getAllTripService(string? type,string? truckId,string? driverId);
+        Task<List<GetAllTripsDTO>> getAllTripService(string? type,string? truckId,string? driverId,string? date);
         Task<getTripDetailsByIdDTO> getTripDetailsById(int id);
     }
     public class TripService : ITripService
@@ -45,7 +45,7 @@ namespace TMS.src
         }
     
     
-        public async Task<List<GetAllTripsDTO>> getAllTripService(string? type,string? truckId,string? driverId)
+        public async Task<List<GetAllTripsDTO>> getAllTripService(string? type,string? truckId,string? driverId,string? date)
 {
     var query =  _tripRepo.getAllTripRepo();
 
@@ -60,6 +60,10 @@ namespace TMS.src
             if (!string.IsNullOrEmpty(driverId))
             {
                 query=query.Where(q=>q.driver_id==int.Parse(driverId));
+            }
+            if (!string.IsNullOrEmpty(date))
+            {
+                query=query.Where(q=>q.scheduled_date==date);
             }
 
 

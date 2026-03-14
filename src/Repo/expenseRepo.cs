@@ -9,6 +9,7 @@ namespace TMS.src
     {
         IQueryable<ExpenseCategory> getAllExpenseCategories();
         Task<ExpenseCategory> GetExpenseCategoryById(int id);
+        public IQueryable<ExpenseModel> getAllExpenseList();
         Task<bool> addExpenseRepo(AddExpenseDTO addExpenseDTO,string imagePath);
         Task saveChangesAsync();
     }
@@ -36,6 +37,13 @@ namespace TMS.src
          return expense;   
         }
 
+        public IQueryable<ExpenseModel> getAllExpenseList()
+        {
+         var expense=_appDbContext.expenses;
+         return expense;   
+        }
+
+
         public async Task<bool> addExpenseRepo(AddExpenseDTO addExpenseDTO,string imagePath)
         {
             var expense= new ExpenseModel
@@ -48,7 +56,6 @@ namespace TMS.src
                 co_driver_id=addExpenseDTO.co_driverId,
                 driver_id=addExpenseDTO.driverId
                 
-
             };
             await _appDbContext.expenses.AddAsync(expense);
              await _appDbContext.SaveChangesAsync();
