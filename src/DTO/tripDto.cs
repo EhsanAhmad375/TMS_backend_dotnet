@@ -32,7 +32,7 @@ namespace TMS.src
         public string? pickupPoint{get;set;}
         public string? destination{get;set;}
         public string? type{get;set;}
-        public int? status{get;set;}
+        public string? status{get;set;}
         public double? allowance{get;set;}
         public int? created_at{get;set;}
         public TruckInfoDTO? truck{get;set;}
