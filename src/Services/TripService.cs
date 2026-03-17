@@ -74,6 +74,7 @@ namespace TMS.src
         destination = t.destination,
         allowance = t.allowance,
         type = t.trip_type,
+        status=t.TripStatusId,
         driver = t.driver != null ? new GetUserRegisterDTo
         {
             userId = t.driver.userId,
