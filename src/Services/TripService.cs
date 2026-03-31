@@ -19,10 +19,12 @@ namespace TMS.src
     public class TripService : ITripService
     {
         private readonly ITripRepo _tripRepo;
+        private readonly IExpenseRepo _expenseRepo;
 
-        public TripService(ITripRepo tripRepo)
+        public TripService(ITripRepo tripRepo, IExpenseRepo expenseRepo)
         {
             _tripRepo=tripRepo;
+            _expenseRepo=expenseRepo;
         }
        public async Task<TripModel> createTripService(CreateTripDTO createTrip)
         {
@@ -107,11 +109,14 @@ namespace TMS.src
             {
                 throw new ApiException("message",$"this trip id: {id} is not exist");
             }
+            var expenses= _expenseRepo.getExpenseListByTripId(trip.tripId);
+            var totalExpense=expenses.Sum(e=>e.amount);
+            var remainingAllowance=trip.allowance-totalExpense;
 
             var tripDetail=new getTripDetailsByIdDTO
             {
                 trip_id=trip.tripId,
-                status=trip.TripStatusId,
+                status=trip.tripStatus!.statusName,
                 type=trip.trip_type,
                 truck=trip.truck!=null? new Truck
                 {
@@ -155,10 +160,21 @@ namespace TMS.src
                 allowance=new Allowance
                 {
                     total=trip.allowance,
-                    used=null,
-                    remaining=null,
+                    used=totalExpense,
+                    remaining=remainingAllowance,
 
                 },
+                expenses=expenses.Select(e=>new TripExpense
+                {
+                    expense_id=e.expenseId,
+                    amount=e.amount,
+                    date=e.created_at.ToString("yyyy-MM-dd"),
+                    note=e.notes,
+                    receiptImage=e.receipt_url,
+                    expense_category_id=e.e_c_id,
+                    expense_category_name=e.expenseCategory!.name??"No Defind Category",
+                    created_at=e.created_at.ToString("yyyy-MM-dd HH:mm:ss")
+                }).ToList(),
                 createdAt=trip.created_at
 
 

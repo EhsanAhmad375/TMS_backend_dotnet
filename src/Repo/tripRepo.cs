@@ -43,6 +43,7 @@ namespace TMS.src
             Include(t=>t.truck).
             Include(t=>t.driver).
             Include(t=>t.co_driver).
+            Include(t=>t.tripStatus).
             FirstOrDefaultAsync(t=>t.tripId==id);
             return trip;
         }

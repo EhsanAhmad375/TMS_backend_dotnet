@@ -45,13 +45,14 @@ namespace TMS.src
     {
         public int trip_id{get;set;}
         public string? type{get;set;}
-        public int? status{get;set;}
+        public string? status{get;set;}
         public Truck? truck{get;set;}
         public Driver? driver{get;set;}
         public Driver? co_driver{get;set;}
         public Client? client{get;set;}
         public Route? route{get;set;}
         public Allowance? allowance{get;set;}
+        public List<TripExpense>? expenses{get;set;}
         public DateTime? createdAt{get;set;}=DateTime.Now;
         
 
@@ -64,6 +65,18 @@ namespace TMS.src
         public string? company{get;set;}
         
     }
+    public class TripExpense
+    {
+        public int? expense_id{get;set;}
+        public int? expense_category_id{get;set;}
+        public string? expense_category_name{get;set;}
+        public double? amount{get;set;}
+        public string? note{get;set;}
+        public string? date{get;set;}
+        public string? receiptImage{get;set;}
+        public string? created_at{get;set;}
+    }
+
 
         public class Route
     {

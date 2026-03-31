@@ -10,6 +10,7 @@ namespace TMS.src
         IQueryable<ExpenseCategory> getAllExpenseCategories();
         Task<ExpenseCategory> GetExpenseCategoryById(int id);
         public IQueryable<ExpenseModel> getAllExpenseList();
+        public IQueryable<ExpenseModel> getExpenseListByTripId(int tripId);
         Task<bool> addExpenseRepo(AddExpenseDTO addExpenseDTO,string imagePath);
         Task saveChangesAsync();
     }
@@ -40,6 +41,11 @@ namespace TMS.src
         public IQueryable<ExpenseModel> getAllExpenseList()
         {
          var expense=_appDbContext.expenses;
+         return expense;   
+        }
+        public IQueryable<ExpenseModel> getExpenseListByTripId(int tripId)
+        {
+         var expense=_appDbContext.expenses.Where(e=>e.trip_id==tripId);
          return expense;   
         }
 
