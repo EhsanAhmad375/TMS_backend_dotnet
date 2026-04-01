@@ -105,5 +105,21 @@ namespace TMS.src
             }
         }
 
+    
+        [HttpGet("get-expense-category-list")]
+        public async Task<IActionResult> getExpenseCategoryList()
+        {
+            try
+            {
+                var expense=await _expenseService.getAllExpenseCategories();
+                return StatusCode(200, new{success=true,message="Expense Category List Successfully Retrive",data=expense});
+                
+            }catch(Exception ex)
+            {
+                return BadRequest(new {success=false, error=ex.Message});
+            }
+        }
+
+    
     }
 }

@@ -48,7 +48,7 @@ namespace TMS.src
 
     public class ExpenseCategory
     {
-        [Key]                   //fuel | toll_plaza | maintenance | food | other
+        [Key]    
         public int id{get;set;}
         public string? name{get;set;}
 

@@ -8,6 +8,8 @@ namespace TMS.src
     {
         Task<TripModel> createTripRepo(TripModel tripModel);
         IQueryable<TripModel> getAllTripRepo();
+        IQueryable<TripModel> getAllTripByDriverIdRepo(int driverId);
+        int getAllTripCountByDriverIdRepo(int driverId);
         Task<TripModel> getTripByIdRepo(int id);
         Task SaveTripChanges();
 
@@ -46,6 +48,16 @@ namespace TMS.src
             Include(t=>t.tripStatus).
             FirstOrDefaultAsync(t=>t.tripId==id);
             return trip;
+        }
+        public IQueryable<TripModel> getAllTripByDriverIdRepo(int driverId)
+        {
+            var trip= _appDbContext.trips.Where(t=>t.driver_id==driverId).Include(t=>t.driver).Include(t=>t.truck);
+            return trip;
+        }
+        public int getAllTripCountByDriverIdRepo(int driverId)
+        {
+        var tripCount = _appDbContext.trips.Count(t => t.driver_id == driverId);
+        return tripCount;
         }
     }
 }

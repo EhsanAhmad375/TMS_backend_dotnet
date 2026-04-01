@@ -66,6 +66,33 @@ namespace TMS.src
 
         
 
+
+        [HttpGet("get-all-users")]
+        public async Task<ActionResult<IEnumerable<GetAllUsersDTO>>> getAllUsers()
+        {
+            try
+            {
+                var users=await _userService.getAllUsersService();
+                return StatusCode(200,new {success=true,message="users retrived successfully",data=users});
+            }catch(Exception ex)
+            {
+                return StatusCode(500,new {succsee=false,message="internal server error",error=ex.Message});
+            }
+        }
+
+        [HttpGet("get-user-profile/{userId}")]
+        public async Task<ActionResult<GetUserProfileDTO>> getUserProfile(int userId)
+        {
+            try
+            {
+                var user=await _userService.getUserProfileService(userId);
+                return StatusCode(200,new {success=true,message="user profile retrived successfully",data=user});
+            }catch(Exception ex)
+            {
+                return StatusCode(500,new {succsee=false,message="internal server error",error=ex.Message});
+            }
+        }
+
         
     }
 }

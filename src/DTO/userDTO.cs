@@ -56,6 +56,40 @@ namespace TMS.src
         public string? L_name{get;set;}
         public string? email{get;set;}
     }
+
+    public class GetAllUsersDTO
+    {
+        public int? userId{get;set;}
+        public string? f_name{get;set;}
+        public string? L_name{get;set;}
+        public string? email{get;set;}
+        public string? role{get;set;}
+        public bool? is_active{get;set;}=false;
+        public bool? is_available{get;set;}=false;
+    }
+
+
+        public class GetUserProfileDTO
+    {
+        public int? userId{get;set;}
+        public string? f_name{get;set;}
+        public string? L_name{get;set;}
+        public string? email{get;set;}
+        public string? contact{get;set;}
+        public string? emergency_contact{get;set;}
+        public string? address{get;set;}
+        public string? role{get;set;}
+        public bool? is_active{get;set;}=false;
+        public bool? is_available{get;set;}=false;
+        public double? rating{get;set;}
+        public string? cnic_status{get;set;}
+        public string? join_date{get;set;}
+        public int? total_trips{get;set;}=0;
+
+
+    }
+
+
     
 }
 

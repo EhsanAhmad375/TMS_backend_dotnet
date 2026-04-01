@@ -11,6 +11,7 @@ namespace TMS.src
         Task<bool> addExpenseService(AddExpenseDTO add,string imageUrl);
         Task validateExpenseIds(AddExpenseDTO add);
         Task<List<ExpenseListDTO>> getAllExpenseList();
+        Task<List<ExpenseCatagoryDTO>> getAllExpenseCategories();
     }
     public class ExpenseService : IExpenseService
     {
@@ -105,7 +106,19 @@ namespace TMS.src
             return expendData; 
         }
 
+        public async Task<List<ExpenseCatagoryDTO>> getAllExpenseCategories()
+        {
+            var expens= _expenseRepo.getAllExpenseCategories();
+            var expendData=await expens.Select(e=>new ExpenseCatagoryDTO
+            {
+                id=e.id,
+                name=e.name
 
+            }).ToListAsync();
+            
+
+            return expendData; 
+        }
 
     }
 }

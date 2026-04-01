@@ -14,17 +14,21 @@ namespace TMS.src
         Task<GetUserLoginDetails> userLoginService(UserLoginDTO userLoginDTO);
         Task<GetUserRegisterDTo> userRegisterService(UserRegisterDTO userRegisterDTO);
 
+        Task<IEnumerable<GetAllUsersDTO>> getAllUsersService();
+        Task<GetUserProfileDTO> getUserProfileService(int userId);
+
 
     }
     public class UserService
     {
         private  readonly UserRepo _userRepo;
         private readonly IConfiguration _config;
-        public UserService(UserRepo userRepo ,IConfiguration configuration)
+        private readonly ITripRepo _tripRepo;
+        public UserService(UserRepo userRepo ,IConfiguration configuration, ITripRepo tripRepo)
         {
             _userRepo=userRepo;
             _config=configuration;
-            
+            _tripRepo=tripRepo;
         }
 
 
@@ -130,6 +134,53 @@ namespace TMS.src
     return new JwtSecurityTokenHandler().WriteToken(token);
 }
 
+
+    
+        public async Task<IEnumerable<GetAllUsersDTO>> getAllUsersService()
+        {
+            var users= _userRepo.GetAllUsers();
+            var userList= await users.Select(u=> new GetAllUsersDTO
+            {
+                userId=u.userId,
+                f_name=u.f_Name,
+                L_name=u.l_Name,
+                email=u.email,
+                role=u.role,
+                is_active=u.is_active,
+                is_available=u.is_available
+            }).ToListAsync();
+
+            return userList;
+        }
+ 
+ 
+        public async Task<GetUserProfileDTO> getUserProfileService(int userId)
+        {
+            var user=await _userRepo.GetUserProfile(userId);
+            if (user == null)
+            {
+                throw new ApiException("message","User not found");
+            }
+            var userProfile=new GetUserProfileDTO
+            {
+                userId=user.userId,
+                f_name=user.f_Name,
+                L_name=user.l_Name,
+                email=user.email,
+                contact=user.phone_no,
+                emergency_contact=user.emergency_contact,
+                address=user.address,
+                role=user.role,
+                is_active=user.is_active,
+                is_available=user.is_available,
+                rating=0,
+                join_date=user.created_at.ToString("yyyy-MM-dd"),
+                total_trips=_tripRepo.getAllTripCountByDriverIdRepo(user.userId),
+                cnic_status=user.is_verified??"not verified",
+
+            };
+            return userProfile;
+        }
 
     }
 }

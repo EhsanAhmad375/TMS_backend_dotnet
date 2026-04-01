@@ -33,4 +33,10 @@ namespace TMS.src
         public string? receiptImage{get;set;}
 
     }
+
+    public class ExpenseCatagoryDTO // Default mein ye internal hoti hai
+{
+    public int id { get; set; }
+    public string name { get; set; }
+}
 }
