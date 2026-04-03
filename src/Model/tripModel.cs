@@ -24,6 +24,7 @@ namespace TMS.src
         public string? trip_type{get;set;} // import | export | local
         public int? TripStatusId { get; set; }
 
+
 // 2. The Navigation Property
         [ForeignKey("TripStatusId")]
         public TripStatus? tripStatus{get;set;}
@@ -41,6 +42,15 @@ namespace TMS.src
         public string? notes{get;set;}
         public string? scheduled_date{get;set;}
         public bool? is_active{get;set;}
+
+        public string? curr_lat{get;set;}
+        public string? curr_lng{get;set;}
+
+        public string? pic_lat{get;set;}
+        public string? pic_lng{get;set;}
+
+        public string? des_lat{get;set;}
+        public string? des_lng{get;set;}
         public DateTime created_at{get;set;}=DateTime.UtcNow;
         public DateTime updated_at{get;set;}=DateTime.UtcNow;
     }

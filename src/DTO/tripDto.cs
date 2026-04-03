@@ -53,9 +53,22 @@ namespace TMS.src
         public Route? route{get;set;}
         public Allowance? allowance{get;set;}
         public List<TripExpense>? expenses{get;set;}
+        public Location? location{get;set;}
         public DateTime? createdAt{get;set;}=DateTime.Now;
         
 
+    }
+
+    public class Location
+    {
+        public string? curr_lat{get;set;}
+        public string? curr_lng{get;set;}
+
+        public string? pic_lat{get;set;}
+        public string? pic_lng{get;set;}
+
+        public string? des_lat{get;set;}
+        public string? des_lng{get;set;}
     }
 
     public class Client

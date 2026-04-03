@@ -164,6 +164,15 @@ namespace TMS.src
                     remaining=remainingAllowance,
 
                 },
+                location=new Location
+                {
+                    curr_lat=trip.curr_lat,
+                    curr_lng=trip.curr_lng,
+                    pic_lat=trip.pic_lat,
+                    pic_lng=trip.pic_lng,
+                    des_lat=trip.des_lat,
+                    des_lng=trip.des_lng,
+                },
                 expenses=expenses.Select(e=>new TripExpense
                 {
                     expense_id=e.expenseId,
@@ -175,6 +184,7 @@ namespace TMS.src
                     expense_category_name=e.expenseCategory!.name??"No Defind Category",
                     created_at=e.created_at.ToString("yyyy-MM-dd HH:mm:ss")
                 }).ToList(),
+                
                 createdAt=trip.created_at
 
 
