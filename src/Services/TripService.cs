@@ -41,7 +41,10 @@ namespace TMS.src
                 client_Name=createTrip.client_name,
                 client_contact=createTrip.client_contact,
                 client_company=createTrip.client_company,
-
+                pic_lat=createTrip.location.pic_lat??"",
+                pic_lng=createTrip.location.pic_lng??"",
+                des_lat=createTrip.location.des_lat??"",
+                des_lng=createTrip.location.des_lng??"",
             };
             return await _tripRepo.createTripRepo(trip);
         }
