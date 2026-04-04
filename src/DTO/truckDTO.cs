@@ -110,6 +110,7 @@ namespace TMS.src
         public string? status{get;set;} //active || inactive|| in maintenance
         public string? sub_status{get;set;} // available || onroute
         public Driver? driver{get;set;}
+        public Driver? co_driver{get;set;}
         
     }
 

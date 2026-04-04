@@ -166,8 +166,8 @@ namespace TMS.src
                 },
                 location=new Location
                 {
-                    curr_lat=trip.curr_lat,
-                    curr_lng=trip.curr_lng,
+                    // curr_lat=trip.curr_lat,
+                    // curr_lng=trip.curr_lng,
                     pic_lat=trip.pic_lat,
                     pic_lng=trip.pic_lng,
                     des_lat=trip.des_lat,

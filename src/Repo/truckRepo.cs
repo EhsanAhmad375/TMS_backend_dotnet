@@ -11,6 +11,7 @@ namespace TMS.src
         IQueryable<TruckModel> getAllTruckRepo();
         Task<TruckModel> getTruckByIdRepo(int id);
         Task<TruckModel> getTruckByNumberPlateRepo(string number_plate);
+        
         Task saveChnagesRepo();
     }
     public class TruckRepo : ITruckRepo

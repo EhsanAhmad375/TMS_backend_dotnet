@@ -17,6 +17,8 @@ namespace TMS.src
         public int? co_driverId{get;set;}
         public double? amount{get;set;}
         public string? note{get;set;}
+        public string? curr_lat{get;set;}
+        public string? curr_lng{get;set;}
         public IFormFile? receiptImage{get;set;}
 
     }

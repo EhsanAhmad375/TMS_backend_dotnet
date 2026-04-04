@@ -80,7 +80,10 @@ namespace TMS.src
         public async Task<bool> addExpenseService(AddExpenseDTO add, string imageUrl)
 {
     await validateExpenseIds(add);
+    add.curr_lat = add.curr_lat ?? "0";
+    add.curr_lng = add.curr_lng ?? "0";
 
+    await _tripRepo.UpdateTruckCurrentLocation(add.tripId.Value, add.curr_lat, add.curr_lng);
     await _expenseRepo.addExpenseRepo(add, imageUrl);
     return true;
 }

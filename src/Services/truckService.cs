@@ -73,7 +73,12 @@ namespace TMS.src
                 driver_id=t.driver.userId,
                 driver_name=t.driver.f_Name+" "+t.driver.l_Name,
                 driver_image_url=t.driver.profile_image    
-                }
+                },
+                co_driver =t.co_driver != null ? new Driver{
+                driver_id=t.co_driver.userId,
+                driver_name=t.co_driver.f_Name+" "+t.co_driver.l_Name,
+                driver_image_url=t.co_driver.profile_image    
+                 } : null
                 
 
             }).ToList();
