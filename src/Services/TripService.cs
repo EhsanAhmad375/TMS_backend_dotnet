@@ -101,99 +101,197 @@ namespace TMS.src
     return trips; 
 }
    
-    
-    public async Task<getTripDetailsByIdDTO> getTripDetailsById(int id)
+
+  public async Task<getTripDetailsByIdDTO> getTripDetailsById(int id)
+{
+    var trip = await _tripRepo.getTripByIdRepo(id);
+    if (trip == null)
+    {
+        throw new ApiException("message", $"this trip id: {id} is not exist");
+    }
+
+    var expenses = _expenseRepo.getExpenseListByTripId(trip.tripId) ;
+    var totalExpense = expenses.Sum(e => e.amount);
+    var remainingAllowance = trip.allowance - totalExpense;
+
+    var tripDetail = new getTripDetailsByIdDTO
+    {
+        trip_id = trip.tripId,
+        // FIX 1: Added ?. and ?? for status
+        status = trip.tripStatus?.statusName ?? "Unknown", 
+        type = trip.trip_type,
+        
+        truck = trip.truck != null ? new Truck
         {
-            var trip=await _tripRepo.getTripByIdRepo(id);
-            if (trip == null)
-            {
-                throw new ApiException("message",$"this trip id: {id} is not exist");
-            }
-            var expenses= _expenseRepo.getExpenseListByTripId(trip.tripId);
-            var totalExpense=expenses.Sum(e=>e.amount);
-            var remainingAllowance=trip.allowance-totalExpense;
+            truck_id = trip.truck.tripId,
+            plate_number = trip.truck.plate_number,
+            model = trip.truck.model
+        } : null,
 
-            var tripDetail=new getTripDetailsByIdDTO
-            {
-                trip_id=trip.tripId,
-                status=trip.tripStatus!.statusName,
-                type=trip.trip_type,
-                truck=trip.truck!=null? new Truck
-                {
-                    truck_id=trip.truck.tripId,
-                    plate_number=trip.truck.plate_number,
-                    model=trip.truck.model
-                }:null,
-                driver=trip.driver!=null?new Driver
-                {
-                    driver_id=trip.driver.userId,
-                    driver_name=trip.driver.f_Name+" "+trip.driver.l_Name,
-                    cnic=trip.driver.cnic,
-                    age=trip.driver.age,
-                    license_number=trip.driver.license_number,
-                    driver_image_url=trip.driver.profile_image,
-                }:null,
-                co_driver=trip.co_driver!=null? new Driver
-                {
-                    driver_id=trip.co_driver.userId,
-                    driver_name=trip.co_driver.f_Name+" "+trip.driver.l_Name,
-                    cnic=trip.co_driver.cnic,
-                    age=trip.co_driver.age,
-                    license_number=trip.co_driver.license_number,
-                    driver_image_url=trip.co_driver.profile_image,
-                }:null,
-                client=new Client
-                {
-                    name=trip.client_Name,
-                    company=trip.client_company,
-                    contact=trip.client_contact,
-                },
-                route=new Route
-                {
-                    from=trip.pickup_location,
-                    to=trip.destination,
-                    distance_km=trip.distance_km,
-                    estimated_time=trip.estimated_time_min,
-                    lats=null,
-                    longs=null,
-                },
-                allowance=new Allowance
-                {
-                    total=trip.allowance,
-                    used=totalExpense,
-                    remaining=remainingAllowance,
+        driver = trip.driver != null ? new Driver
+        {
+            driver_id = trip.driver.userId,
+            driver_name = $"{trip.driver.f_Name} {trip.driver.l_Name}",
+            cnic = trip.driver.cnic,
+            age = trip.driver.age,
+            license_number = trip.driver.license_number,
+            driver_image_url = trip.driver.profile_image,
+        } : null,
 
-                },
-                location=new Location
-                {
-                    // curr_lat=trip.curr_lat,
-                    // curr_lng=trip.curr_lng,
-                    pic_lat=trip.pic_lat,
-                    pic_lng=trip.pic_lng,
-                    des_lat=trip.des_lat,
-                    des_lng=trip.des_lng,
-                },
-                expenses=expenses.Select(e=>new TripExpense
-                {
-                    expense_id=e.expenseId,
-                    amount=e.amount,
-                    date=e.created_at.ToString("yyyy-MM-dd"),
-                    note=e.notes,
-                    receiptImage=e.receipt_url,
-                    expense_category_id=e.e_c_id,
-                    expense_category_name=e.expenseCategory!.name??"No Defind Category",
-                    created_at=e.created_at.ToString("yyyy-MM-dd HH:mm:ss")
-                }).ToList(),
+        // FIX 2: Corrected co_driver logic to use trip.co_driver everywhere
+        co_driver = trip.co_driver != null ? new Driver
+        {
+            driver_id = trip.co_driver.userId,
+            driver_name = $"{trip.co_driver.f_Name} {trip.co_driver.l_Name}",
+            cnic = trip.co_driver.cnic,
+            age = trip.co_driver.age,
+            license_number = trip.co_driver.license_number,
+            driver_image_url = trip.co_driver.profile_image,
+        } : null,
+
+        client = new Client
+        {
+            name = trip.client_Name,
+            company = trip.client_company,
+            contact = trip.client_contact,
+        },
+
+        route = new Route
+        {
+            from = trip.pickup_location,
+            to = trip.destination,
+            distance_km = trip.distance_km,
+            estimated_time = trip.estimated_time_min,
+            lats = null,
+            longs = null,
+        },
+
+        allowance = new Allowance
+        {
+            total = trip.allowance,
+            used = totalExpense,
+            remaining = remainingAllowance,
+        },
+
+        location = new Location
+        {
+            pic_lat = trip.pic_lat,
+            pic_lng = trip.pic_lng,
+            des_lat = trip.des_lat,
+            des_lng = trip.des_lng,
+        },
+
+        expenses = expenses.Select(e => new TripExpense
+        {
+            expense_id = e.expenseId,
+            amount = e.amount,
+            date = e.created_at.ToString("yyyy-MM-dd"),
+            note = e.notes,
+            receiptImage = e.receipt_url,
+            expense_category_id = e.e_c_id,
+            // FIX 3: Added safety for category name
+            expense_category_name = e.expenseCategory!.name ?? "No Defined Category",
+            created_at = e.created_at.ToString("yyyy-MM-dd HH:mm:ss")
+        }).ToList(),
+
+        createdAt = trip.created_at
+    };
+
+    return tripDetail;
+}
+
+    // public async Task<getTripDetailsByIdDTO> getTripDetailsById(int id)
+    //     {
+    //         var trip=await _tripRepo.getTripByIdRepo(id);
+    //         if (trip == null)
+    //         {
+    //             throw new ApiException("message",$"this trip id: {id} is not exist");
+    //         }
+    //         var expenses= _expenseRepo.getExpenseListByTripId(trip.tripId);
+    //         var totalExpense=expenses.Sum(e=>e.amount);
+    //         var remainingAllowance=trip.allowance-totalExpense;
+
+    //         var tripDetail=new getTripDetailsByIdDTO
+    //         {
+    //             trip_id=trip.tripId,
+    //             status=trip.tripStatus!.statusName,
+    //             type=trip.trip_type,
+    //             truck=trip.truck!=null? new Truck
+    //             {
+    //                 truck_id=trip.truck.tripId,
+    //                 plate_number=trip.truck.plate_number,
+    //                 model=trip.truck.model
+    //             }:null,
+    //             driver=trip.driver!=null?new Driver
+    //             {
+    //                 driver_id=trip.driver.userId,
+    //                 driver_name=trip.driver.f_Name+" "+trip.driver.l_Name,
+    //                 cnic=trip.driver.cnic,
+    //                 age=trip.driver.age,
+    //                 license_number=trip.driver.license_number,
+    //                 driver_image_url=trip.driver.profile_image,
+    //             }:null,
+    //             co_driver=trip.co_driver!=null? new Driver
+    //             {
+    //                 driver_id=trip.co_driver.userId,
+    //                 driver_name=trip.co_driver.f_Name+" "+trip.driver.l_Name,
+    //                 cnic=trip.co_driver.cnic,
+    //                 age=trip.co_driver.age,
+    //                 license_number=trip.co_driver.license_number,
+    //                 driver_image_url=trip.co_driver.profile_image,
+    //             }:null,
+    //             client=new Client
+    //             {
+    //                 name=trip.client_Name,
+    //                 company=trip.client_company,
+    //                 contact=trip.client_contact,
+    //             },
+    //             route=new Route
+    //             {
+    //                 from=trip.pickup_location,
+    //                 to=trip.destination,
+    //                 distance_km=trip.distance_km,
+    //                 estimated_time=trip.estimated_time_min,
+    //                 lats=null,
+    //                 longs=null,
+    //             },
+    //             allowance=new Allowance
+    //             {
+    //                 total=trip.allowance,
+    //                 used=totalExpense,
+    //                 remaining=remainingAllowance,
+
+    //             },
+    //             location=new Location
+    //             {
+    //                 // curr_lat=trip.curr_lat,
+    //                 // curr_lng=trip.curr_lng,
+    //                 pic_lat=trip.pic_lat,
+    //                 pic_lng=trip.pic_lng,
+    //                 des_lat=trip.des_lat,
+    //                 des_lng=trip.des_lng,
+    //             },
+    //             expenses=expenses.Select(e=>new TripExpense
+    //             {
+    //                 expense_id=e.expenseId,
+    //                 amount=e.amount,
+    //                 date=e.created_at.ToString("yyyy-MM-dd"),
+    //                 note=e.notes,
+    //                 receiptImage=e.receipt_url,
+    //                 expense_category_id=e.e_c_id,
+    //                 expense_category_name=e.expenseCategory!.name??"No Defind Category",
+    //                 created_at=e.created_at.ToString("yyyy-MM-dd HH:mm:ss")
+    //             }).ToList(),
                 
-                createdAt=trip.created_at
+    //             createdAt=trip.created_at
 
 
-            };
+    //         };
     
     
-        return tripDetail;
+    //     return tripDetail;
     
-        }
+    //     }
     
     
     
