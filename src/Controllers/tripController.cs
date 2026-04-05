@@ -51,7 +51,7 @@ namespace TMS.src
     
 
     [HttpGet("get-trip/{id}")]
-    public async Task<ActionResult> getTripDetailsById([FromRoute] int id)
+    public async Task<IActionResult> getTripDetailsById([FromRoute] int id)
         {
             try
             {
@@ -69,5 +69,51 @@ namespace TMS.src
     
     
     
+
+    [HttpGet("get-all-trip-status")]
+    public async Task<ActionResult> getAllTripStatus()
+{
+    try
+    {
+        // Service ab list return karega
+        var tripStatus = await _tripService.getAllTripStatus();
+        
+        return StatusCode(200, new { 
+            success = true, 
+            message = "Trip Status Retrieved Successfully", 
+            data = tripStatus // Ab yahan poori array aayegi
+        });
+    }
+    catch(Exception ex)
+    {
+        return StatusCode(500, new { success = false, message = "Internal server error", error = ex.Message });
+    }
+}
+
+    [HttpPut("update-trip-status")]
+    public async Task<ActionResult> updateTripStatus([FromBody] updateStatusOfTripDTO dTO)
+        {
+            try
+            {
+                if (!ModelState.IsValid)
+                {
+                    return StatusCode(400,new {success=false,error=ModelState});
+                }
+
+                var isUpdated=await _tripService.UpdateTripStatusService(dTO.tripId,dTO.statusId);
+                if(isUpdated)                {
+                    return StatusCode(200,new {success=true,message="Trip status updated successfully"});
+                }else
+                {                   
+                    return StatusCode(400,new {success=false,message="Failed to update trip status"});
+                }
+            }catch(Exception ex)
+            {
+                return StatusCode(500, new {success=false,message="internal server error",error=ex.Message});
+            }
+
+        }
+
+
     }
 }

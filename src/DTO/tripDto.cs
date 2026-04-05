@@ -114,4 +114,11 @@ namespace TMS.src
     }
 
 
+    public class updateStatusOfTripDTO
+    {
+        public int tripId{get;set;}
+        public int statusId{get;set;}
+    }
+
+
 }

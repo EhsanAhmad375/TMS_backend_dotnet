@@ -12,6 +12,9 @@ namespace TMS.src
         int getAllTripCountByDriverIdRepo(int driverId);
         Task<TripModel> getTripByIdRepo(int id);
         Task UpdateTruckCurrentLocation(int tripId, string lat, string lng);
+
+        IQueryable<TripStatus> getAllTripStatusRepo();
+        Task UpdateTripStatusRepo(int tripId, int statusId);
         Task SaveTripChanges();
 
     }
@@ -100,5 +103,26 @@ namespace TMS.src
         await SaveTripChanges();
 
     }
+
+
+        public IQueryable<TripStatus> getAllTripStatusRepo()
+        {
+            var tripStatus= _appDbContext.tripStatuses;
+            return tripStatus;
+        }
+
+        public async Task UpdateTripStatusRepo(int tripId, int statusId)
+        {
+            var trip = await _appDbContext.trips.FindAsync(tripId);
+            if (trip != null)
+            {
+                trip.TripStatusId = statusId;
+                await SaveTripChanges();
+            }
+        }
+
+
+
+    
 }
 }
