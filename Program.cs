@@ -12,7 +12,7 @@ var builder = WebApplication.CreateBuilder(args);
 
 // --- RENDER PORT CONFIGURATION (REQUIRED) --- updaye tje code
 // Render 'PORT' environment variable deta hai, humein usay sunna hoga.
-var port = Environment.GetEnvironmentVariable("PORT") ?? "8080";
+var port = Environment.GetEnvironmentVariable("PORT") ?? "10000";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
 // 1. Database Connection String
