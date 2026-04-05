@@ -41,6 +41,7 @@ namespace TMS.src
         public int? odometer_end{get;set;}
         public string? notes{get;set;}
         public string? scheduled_date{get;set;}
+        public string? scheduled_time{get;set;}
         public bool? is_active{get;set;}
 
         public string? curr_lat{get;set;}

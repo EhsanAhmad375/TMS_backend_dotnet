@@ -16,6 +16,7 @@ namespace TMS.src
         public string? destination{get;set;}
         public int? allowance{get;set;}
         public string? scheduled_date{get;set;}
+        public string? scheduled_time{get;set;}
         public string? notes{get;set;}
         public string? client_name{get;set;}
         public string? client_contact{get;set;}

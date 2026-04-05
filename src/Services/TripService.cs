@@ -45,6 +45,7 @@ namespace TMS.src
                 pic_lng=createTrip.location.pic_lng??"",
                 des_lat=createTrip.location.des_lat??"",
                 des_lng=createTrip.location.des_lng??"",
+                scheduled_time=createTrip.scheduled_time,
             };
             return await _tripRepo.createTripRepo(trip);
         }
