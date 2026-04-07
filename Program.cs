@@ -15,11 +15,10 @@ var builder = WebApplication.CreateBuilder(args);
 var port = Environment.GetEnvironmentVariable("PORT") ?? "10000";
 builder.WebHost.UseUrls($"http://0.0.0.0:{port}");
 
-// 1. Database Connection String
-// Render par aap ise Environment Variables mein "ConnectionStrings__DefaultConnection" ke naam se denge
+
 var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
 
-// 2. DbContext Configuration (MySQL)
+
 builder.Services.AddDbContext<AppDbContext>(options =>
 {
     if (!string.IsNullOrEmpty(connectionString))
@@ -71,6 +70,9 @@ builder.Services.AddScoped<ITripService, TripService>();
 // Expense
 builder.Services.AddScoped<IExpenseRepo, ExpenseRepo>();
 builder.Services.AddScoped<IExpenseService, ExpenseService>();
+
+// Income
+builder.Services.AddScoped<IncomeRepo, IncomeRepo>();
 
 // Dashboard
 builder.Services.AddScoped<IDashboardService, DashboardService>();

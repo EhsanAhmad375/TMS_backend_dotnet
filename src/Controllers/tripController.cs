@@ -9,9 +9,11 @@ namespace TMS.src
     public class TripController : ControllerBase
     {
         private readonly ITripService _tripService;
-        public TripController(ITripService tripService)
+        private readonly IncomeRepo _incomeRepo;
+        public TripController(ITripService tripService, IncomeRepo incomeRepo)
         {
             _tripService=tripService;
+            _incomeRepo=incomeRepo;
         }
 
 
@@ -25,6 +27,17 @@ namespace TMS.src
             try
             {
                 var trip=await _tripService.createTripService(createTrip);
+                await _incomeRepo.createIncomeRepo(new IncomeModel
+                {
+                    trip_id=trip.tripId,
+                    income_source_id=1, 
+                    reveived_amount=createTrip.receiving_amount,
+                    remaining_amount=(createTrip.total_amount??0) - (createTrip.receiving_amount??0),
+                    total_amount=createTrip.total_amount,
+                   
+                    notes=$"Income for Trip ID: {trip.tripId}"
+                });
+
                return StatusCode(201,new {success=true,message="Trip Created Successfully",data=new{id=trip.tripId,status=trip.tripStatus,created_at=trip.created_at}});
             }catch(Exception ex)
             {

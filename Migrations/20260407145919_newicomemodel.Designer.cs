@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TMS.src.Data;
 
@@ -11,9 +12,11 @@ using TMS.src.Data;
 namespace TMS.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260407145919_newicomemodel")]
+    partial class newicomemodel
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -114,6 +117,9 @@ namespace TMS.Migrations
                     b.Property<int?>("added_by")
                         .HasColumnType("int");
 
+                    b.Property<double>("amount")
+                        .HasColumnType("double");
+
                     b.Property<DateTime>("created_at")
                         .HasColumnType("datetime(6)");
 
@@ -125,15 +131,6 @@ namespace TMS.Migrations
 
                     b.Property<string>("notes")
                         .HasColumnType("longtext");
-
-                    b.Property<double?>("remaining_amount")
-                        .HasColumnType("double");
-
-                    b.Property<double?>("reveived_amount")
-                        .HasColumnType("double");
-
-                    b.Property<double?>("total_amount")
-                        .HasColumnType("double");
 
                     b.Property<int?>("trip_id")
                         .HasColumnType("int");

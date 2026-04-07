@@ -24,11 +24,13 @@ namespace TMS.src
     {
         private readonly ITripRepo _tripRepo;
         private readonly IExpenseRepo _expenseRepo;
+        private readonly IncomeRepo _incomeRepo;
 
-        public TripService(ITripRepo tripRepo, IExpenseRepo expenseRepo)
+        public TripService(ITripRepo tripRepo, IExpenseRepo expenseRepo, IncomeRepo incomeRepo)
         {
             _tripRepo=tripRepo;
             _expenseRepo=expenseRepo;
+            _incomeRepo=incomeRepo;
         }
        public async Task<TripModel> createTripService(CreateTripDTO createTrip)
         {

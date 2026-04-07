@@ -12,6 +12,8 @@ namespace TMS.src.Data
         public DbSet<TruckModel> trucks{get;set;}
         public DbSet<TripStatus> tripStatuses{get;set;}
         public DbSet<ExpenseCategory> expenseCategories{get;set;}
+        public DbSet<IncomeSource> IncomeSources { get; set; }
+        public DbSet<IncomeModel> Incomes { get; set; }
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
