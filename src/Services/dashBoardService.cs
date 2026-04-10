@@ -17,15 +17,20 @@ namespace TMS.src
             _context=context;
          
         }
-
-        public async Task<DashboardDTO> getDashbaordService(string? date)
+public async Task<DashboardDTO> getDashbaordService(string? date)
 {
+    // Agar date null hai, to hum aaj ki date use karenge comparison ke liye
+    string effectiveDate = string.IsNullOrEmpty(date) 
+                           ? DateTime.Now.ToString("yyyy-MM-dd") 
+                           : date;
+                           
     bool isFilterByDate = !string.IsNullOrEmpty(date);
+    int?[] allowedStatuses = { 2, 3, 4 };
 
-    // 1. Trips Summary - AsNoTracking() added for performance
+    // 1. Trips Summary
     var tripsData = await _context.trips
         .AsNoTracking() 
-        .Where(c => !isFilterByDate || c.scheduled_date == date)
+        .Where(c => c.scheduled_date == effectiveDate || allowedStatuses.Contains(c.TripStatusId))
         .GroupBy(c => 1)
         .Select(g => new {
             Total = g.Count(),
@@ -38,7 +43,7 @@ namespace TMS.src
             ready = g.Count(c => c.TripStatusId == 4)
         }).FirstOrDefaultAsync();
 
-    // 2. Trucks Data - AsNoTracking() added
+    // 2. Trucks Data (Same as before)
     var trucksData = await _context.trucks
         .AsNoTracking()
         .GroupBy(t => 1)
@@ -51,32 +56,26 @@ namespace TMS.src
             Maintenance = g.Count(t => t.type == "maintenance")
         }).FirstOrDefaultAsync();
 
-    // 3. Detailed Trips List - Optimized projection
-    List<GetTripsListDTO> tripsListDTOs = new List<GetTripsListDTO>();
-
-    if (isFilterByDate)
-    {
-        tripsListDTOs = await _context.trips
-            .AsNoTracking()
-            .Where(t => t.scheduled_date == date)
-            // .Include ko hata diya, Select khud handle karega
-            .Select(t => new GetTripsListDTO
+    // 3. Detailed Trips List - (Condition Hata di hai takay hamesha chale)
+    var tripsListDTOs = await _context.trips
+        .AsNoTracking()
+        .Where(c => c.scheduled_date == effectiveDate || allowedStatuses.Contains(c.TripStatusId))
+        .Select(t => new GetTripsListDTO
+        {
+            tripId = t.tripId,
+            pickupPoint = t.pickup_location,
+            destination = t.destination,
+            type = t.trip_type,
+            date = t.scheduled_date,
+            status = t.TripStatusId,
+            created_at = t.created_at,
+            truck = t.truck != null ? new Truck
             {
-                tripId = t.tripId,
-                pickupPoint = t.pickup_location,
-                destination = t.destination,
-                type = t.trip_type,
-                date = t.scheduled_date,
-                status=t.TripStatusId,
-                created_at = t.created_at,
-                truck = t.truck != null ? new Truck
-                {
-                    truck_id = t.truck_id, // Check karein agar ye truckId hai
-                    plate_number = t.truck.plate_number,
-                    model = t.truck.model 
-                } : null
-            }).ToListAsync();
-    }
+                truck_id = t.truck_id,
+                plate_number = t.truck.plate_number,
+                model = t.truck.model 
+            } : null
+        }).ToListAsync();
 
     // Mapping and Calculation
     int totalOwned = trucksData?.Owned ?? 0;
@@ -85,7 +84,7 @@ namespace TMS.src
 
     return new DashboardDTO
     {
-        date = date ?? "All Time",
+        date = date ?? "Today + Status(2,3,4)",
         load_percentage = loadPercentage,
         trips = new TripsInfoDTO {
             total = tripsData?.Total ?? 0,
@@ -95,7 +94,7 @@ namespace TMS.src
             in_progress = tripsData?.InProgress ?? 0,
             completed = tripsData?.Completed ?? 0,
             not_started = tripsData?.NotStarted ?? 0,
-            ready=tripsData?.ready??0
+            ready = tripsData?.ready ?? 0
         },
         vihicles = new VihiclesInfoDTO {
             total = trucksData?.Total ?? 0,
@@ -108,8 +107,6 @@ namespace TMS.src
         tripList = tripsListDTOs 
     };
 }
-
-
     
     }
     
