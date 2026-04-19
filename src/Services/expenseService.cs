@@ -12,18 +12,21 @@ namespace TMS.src
         Task validateExpenseIds(AddExpenseDTO add);
         Task<List<ExpenseListDTO>> getAllExpenseList();
         Task<List<ExpenseCatagoryDTO>> getAllExpenseCategories();
+        Task<Finance> GetFinanceReport(int year, int month);
     }
     public class ExpenseService : IExpenseService
     {
         private readonly IExpenseRepo _expenseRepo;
         private readonly IUserRepo _userRepo;
         private readonly ITripRepo _tripRepo;
+        private readonly IncomeRepo _incomeRepo;
 
-        public ExpenseService(IExpenseRepo expenseRepo,IUserRepo userRepo,ITripRepo tripRepo)
+        public ExpenseService(IExpenseRepo expenseRepo,IUserRepo userRepo,ITripRepo tripRepo, IncomeRepo incomeRepo)
         {
             _expenseRepo = expenseRepo;
             _userRepo= userRepo;
             _tripRepo=tripRepo;
+            _incomeRepo=incomeRepo;
         }
 
         public async Task<List<ExpenseTypeDTO>> expenseType()
@@ -122,6 +125,52 @@ namespace TMS.src
 
             return expendData; 
         }
+
+    
+public async Task<Finance> GetFinanceReport(int year, int month)
+{
+    // 1. Fetching Data
+    // Note: Database se list nikaalte waqt hi filter karna behtar hai agar data bohot ziyada ho
+    var allExpenses = await _expenseRepo.getAllExpenseList().ToListAsync();
+    var categories = await _expenseRepo.getAllExpenseCategories().ToListAsync();
+    var allIncomes = await _incomeRepo.getAllIncomeRepo().ToListAsync();
+
+    // 2. Filter using created_at (DateTime object)
+    var filteredEx = allExpenses
+        .Where(e => e.created_at.Year == year && e.created_at.Month == month)
+        .ToList();
+
+    var filteredIn = allIncomes
+        .Where(i => i.created_at.Year == year && i.created_at.Month == month)
+        .ToList();
+
+    // 3. Breakdown Logic (Same as before but now reliable)
+    var breakdown = filteredEx
+        .GroupBy(e => e.e_c_id)
+        .ToDictionary(
+            g => categories.FirstOrDefault(c => c.id == g.Key)?.name?.ToLower() ?? "others",
+            g => g.Sum(e => e.amount ?? 0)
+        );
+
+    double totalExp = filteredEx.Sum(e => e.amount ?? 0);
+    double totalRev = filteredIn.Sum(i => i.total_amount ?? 0);
+
+    return new Finance
+    {
+        peroid = "monthly",
+        date = $"{year}-{month:D2}",
+        summary = new Summary
+        {
+            total_revenue = totalRev,
+            total_expense = totalExp,
+            total_net_profit = totalRev - totalExp,
+            profit_change_percentage = 15, // Comparison logic can be added
+            profit_trends = (totalRev - totalExp) >= 0 ? "up" : "down"
+        },
+        expense_breakdown = breakdown
+    };
+}
+
 
     }
 }

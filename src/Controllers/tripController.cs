@@ -118,5 +118,27 @@ namespace TMS.src
         }
 
 
+    
+
+    [HttpPut("update-trip-location")]
+    public async Task<ActionResult> updateTripLocation([FromBody] addCurrentLocationDTO addCurrentLocationDTO)
+        {
+            try
+            {                if (!ModelState.IsValid)
+                {
+                    return StatusCode(400,new {success=false,error=ModelState});}
+                var isUpdated=await _tripService.addTripLocationService(addCurrentLocationDTO);
+                if(isUpdated)                {
+                    return StatusCode(201,new {success=true,message="Trip location updated successfully"});
+                }else
+                {                   
+                    return StatusCode(400,new {success=false,message="Failed to update trip location"});        
+
+                }}catch(Exception ex)
+            {                return StatusCode(500, new {success=false,message="internal server error",error=ex.Message});
+            }}
+ 
+ 
+
     }
 }

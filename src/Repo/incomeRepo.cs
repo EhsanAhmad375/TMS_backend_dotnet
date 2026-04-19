@@ -1,3 +1,4 @@
+using System.Threading.Tasks;
 using Microsoft.AspNetCore;
 using Microsoft.EntityFrameworkCore;
 using TMS.src;
@@ -8,6 +9,7 @@ namespace TMS.src
     {
         Task<IncomeModel> createIncomeRepo(IncomeModel incomeModel);
         IQueryable<IncomeModel> getAllIncomeRepo();
+        IQueryable<IncomeSource> getAllIncomeSourcesRepo();
         Task<IncomeModel> getIncomeByIdRepo(int id);
         Task SaveIncomeChanges();
     }
@@ -45,6 +47,11 @@ namespace TMS.src
             FirstOrDefaultAsync(i=>i.incomeId==id);
             return income;
         }
+
+        public IQueryable<IncomeSource> getAllIncomeSourcesRepo()
+{
+    return _appDbContext.IncomeSources;
+}
 
 }
 }

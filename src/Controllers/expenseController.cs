@@ -120,6 +120,33 @@ namespace TMS.src
             }
         }
 
+
+        [HttpGet("get-financial-report")]
+        public async Task<IActionResult> GetMonthlyFinanceReport([FromQuery] int year, [FromQuery] int month)
+        {
+            // Basic validation taake ghalat month na aaye
+            if (month < 1 || month > 12)
+            {
+                return BadRequest(new { success = false, message = "Invalid month. Please provide a value between 1 and 12." });
+            }
+
+            try
+            {
+                var report = await _expenseService.GetFinanceReport(year, month);
+                
+                return Ok(new 
+                { 
+                    success = true, 
+                    data = report 
+                });
+            }
+            catch (Exception ex)
+            {
+                // Error handling agar DB mein koi masla ho
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
+        }
+
     
     }
 }

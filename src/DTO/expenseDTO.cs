@@ -41,4 +41,35 @@ namespace TMS.src
     public int id { get; set; }
     public string name { get; set; }
 }
+
+
+
+
+
+/// Finance Related DTOs
+ 
+    public class Finance
+    {
+        public string? peroid{get;set;}
+        public string? date{get;set;}
+
+        public Summary? summary{get;set;}
+        
+        public Dictionary<string, double>? expense_breakdown { get; set; }
+
+
+    }
+
+    public class Summary
+    {
+        public double? total_revenue{get;set;}
+        public double? total_expense{get;set;}
+        public double? total_net_profit{get;set;}
+        public int? profit_change_percentage{get;set;}
+        public string? profit_trends{get;set;}
+    }
+
+
+
+
 }

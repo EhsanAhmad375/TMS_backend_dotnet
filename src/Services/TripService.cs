@@ -19,6 +19,8 @@ namespace TMS.src
         Task<List<TripStatus>> getAllTripStatus();
 
         Task<bool> UpdateTripStatusService(int tripId, int statusId);
+
+        Task<bool> addTripLocationService(addCurrentLocationDTO addCurrentLocationDTO);
     }
     public class TripService : ITripService
     {
@@ -278,6 +280,14 @@ public async Task<TripModel> createTripService(CreateTripDTO createTrip)
             return true;
             
         }
+
+
+    public async Task<bool> addTripLocationService(addCurrentLocationDTO addCurrentLocationDTO)
+    {
+        await _tripRepo.UpdateTruckCurrentLocation(addCurrentLocationDTO.tripId.Value, addCurrentLocationDTO.current_lat, addCurrentLocationDTO.current_long);
+        return true;
+    
+    }
     
     }
 }

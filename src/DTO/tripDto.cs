@@ -124,4 +124,13 @@ namespace TMS.src
     }
 
 
+
+    public class addCurrentLocationDTO
+    {
+        public int? tripId{get;set;}
+        public string? current_lat{get;set;}
+        public string? current_long{get;set;}
+    }
+
+
 }
