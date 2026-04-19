@@ -27,21 +27,11 @@ namespace TMS.src
             try
             {
                 var trip=await _tripService.createTripService(createTrip);
-                await _incomeRepo.createIncomeRepo(new IncomeModel
-                {
-                    trip_id=trip.tripId,
-                    income_source_id=1, 
-                    reveived_amount=createTrip.receiving_amount,
-                    remaining_amount=(createTrip.total_amount??0) - (createTrip.receiving_amount??0),
-                    total_amount=createTrip.total_amount,
-                   
-                    notes=$"Income for Trip ID: {trip.tripId}"
-                });
 
                return StatusCode(201,new {success=true,message="Trip Created Successfully",data=new{id=trip.tripId,status=trip.tripStatus,created_at=trip.created_at}});
             }catch(Exception ex)
             {
-                 return StatusCode(500,new {success=false,message="internal server error",error=ex});
+                 return StatusCode(500,new {success=false,message="internal server error",error=ex.Message,stackTrace = ex.StackTrace, detail = ex.InnerException?.Message});
             }
         }
 

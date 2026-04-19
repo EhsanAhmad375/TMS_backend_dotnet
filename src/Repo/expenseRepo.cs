@@ -60,7 +60,9 @@ namespace TMS.src
                 notes=addExpenseDTO.note,
                 receipt_url=imagePath,
                 co_driver_id=addExpenseDTO.co_driverId,
-                driver_id=addExpenseDTO.driverId
+                driver_id=addExpenseDTO.driverId,
+                exp_lat=addExpenseDTO.curr_lat,
+                exp_long=addExpenseDTO.curr_lng,
                 
             };
             await _appDbContext.expenses.AddAsync(expense);

@@ -23,6 +23,7 @@ namespace TMS.src
         public string? client_name{get;set;}
         public string? client_contact{get;set;}
         public string? client_company{get;set;}   
+        public AddIncomeDTO? income{get;set;}
         public Location? location{get;set;}
     }
 

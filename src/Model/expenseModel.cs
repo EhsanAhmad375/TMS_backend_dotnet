@@ -27,6 +27,8 @@ namespace TMS.src
         public string? date{get;set;}
         public string? time{get;set;}
         public string? location{get;set;}
+        public string? exp_lat{get;set;}
+        public string? exp_long{get;set;}
         public string? receipt_url{get;set;}
         public string? notes{get;set;}
         public int? added_by{get;set;}

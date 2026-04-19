@@ -6,7 +6,7 @@ using Microsoft.IdentityModel.Tokens;
 using System.Text;
 using System.Security.Claims;
 using System.IdentityModel.Tokens.Jwt;
-
+using TMS.src.Data;
 namespace TMS.src
 {
     public interface ITripService
@@ -25,39 +25,88 @@ namespace TMS.src
         private readonly ITripRepo _tripRepo;
         private readonly IExpenseRepo _expenseRepo;
         private readonly IncomeRepo _incomeRepo;
+        private readonly AppDbContext _context; // Add your DbContext here
 
-        public TripService(ITripRepo tripRepo, IExpenseRepo expenseRepo, IncomeRepo incomeRepo)
+        public TripService(ITripRepo tripRepo, IExpenseRepo expenseRepo, IncomeRepo incomeRepo, AppDbContext context)
         {
             _tripRepo=tripRepo;
             _expenseRepo=expenseRepo;
             _incomeRepo=incomeRepo;
+            _context = context; 
         }
-       public async Task<TripModel> createTripService(CreateTripDTO createTrip)
+public async Task<TripModel> createTripService(CreateTripDTO createTrip)
+{
+    if (_context == null) throw new Exception("Database context is not initialized.");
+
+    // Define the strategy for MySQL retries
+    var strategy = _context.Database.CreateExecutionStrategy();
+
+    return await strategy.ExecuteAsync(async () =>
+    {
+        // Start transaction INSIDE the execution strategy
+        using var transaction = await _context.Database.BeginTransactionAsync();
+
+        try
         {
-            var trip=new TripModel
+            var trip = new TripModel
             {
-                truck_id=createTrip.truck_id,
-                driver_id=createTrip.driver_id,
-                co_driver_id=createTrip.co_driver_id,
-                trip_type=createTrip.type,
-                pickup_location=createTrip.pickup_location,
-                destination=createTrip.destination,
-                allowance=createTrip.allowance,
-                scheduled_date=createTrip.scheduled_date,
-                client_Name=createTrip.client_name,
-                client_contact=createTrip.client_contact,
-                client_company=createTrip.client_company,
-                pic_lat=createTrip.location.pic_lat??"",
-                pic_lng=createTrip.location.pic_lng??"",
-                des_lat=createTrip.location.des_lat??"",
-                des_lng=createTrip.location.des_lng??"",
-                scheduled_time=createTrip.scheduled_time,
+                truck_id = createTrip.truck_id,
+                driver_id = createTrip.driver_id,
+                co_driver_id = createTrip.co_driver_id,
+                trip_type = createTrip.type,
+                pickup_location = createTrip.pickup_location,
+                destination = createTrip.destination,
+                allowance = createTrip.allowance,
+                scheduled_date = createTrip.scheduled_date,
+                client_Name = createTrip.client_name,
+                client_contact = createTrip.client_contact,
+                client_company = createTrip.client_company,
+                scheduled_time = createTrip.scheduled_time,
+                
+                // Null-safe mapping
+                pic_lat = createTrip.location?.pic_lat ?? "",
+                pic_lng = createTrip.location?.pic_lng ?? "",
+                des_lat = createTrip.location?.des_lat ?? "",
+                des_lng = createTrip.location?.des_lng ?? ""
             };
-            return await _tripRepo.createTripRepo(trip);
+
+            // 1. Save Trip (This populates savedTrip.tripId)
+            var savedTrip = await _tripRepo.createTripRepo(trip);
+
+            // 2. Save Income only if it exists in DTO
+            if (createTrip.income != null)
+            {
+                var income = new IncomeModel
+                {
+                    trip_id = savedTrip.tripId, 
+                    total_amount = createTrip.income.total_amount,
+                    reveived_amount = createTrip.income.received_amount,
+                    income_source_id = createTrip.income.sourceId,
+                    remaining_amount = (createTrip.income.total_amount ?? 0) - (createTrip.income.received_amount ?? 0),
+                    notes = createTrip.income.notes ?? $"Income for Trip ID: {savedTrip.tripId}",
+                    added_by = createTrip.income.added_by??0
+                };
+                
+                await _incomeRepo.createIncomeRepo(income);                
+            }
+
+            await transaction.CommitAsync();
+            return savedTrip;
+        } 
+        catch (Exception)
+        {
+            // Rollback only if transaction is still active
+            if (transaction.TransactionId != null)
+            {
+                await transaction.RollbackAsync();
+            }
+            throw; 
         }
-    
-    
-        public async Task<List<GetAllTripsDTO>> getAllTripService(string? type,string? truckId,string? driverId,string? date)
+    });
+}
+
+
+    public async Task<List<GetAllTripsDTO>> getAllTripService(string? type,string? truckId,string? driverId,string? date)
 {
     var query =  _tripRepo.getAllTripRepo();
 
