@@ -1,20 +1,20 @@
 {
   "format": 1,
   "restore": {
-    "/Users/ehsanahmad/Documents/dotnet/TMS/TMS/TMS.csproj": {}
+    "/Users/ehsanahmad375/Documents/dotnet/TMS_backend_dotnet/TMS.csproj": {}
   },
   "projects": {
-    "/Users/ehsanahmad/Documents/dotnet/TMS/TMS/TMS.csproj": {
+    "/Users/ehsanahmad375/Documents/dotnet/TMS_backend_dotnet/TMS.csproj": {
       "version": "1.0.0",
       "restore": {
-        "projectUniqueName": "/Users/ehsanahmad/Documents/dotnet/TMS/TMS/TMS.csproj",
+        "projectUniqueName": "/Users/ehsanahmad375/Documents/dotnet/TMS_backend_dotnet/TMS.csproj",
         "projectName": "TMS",
-        "projectPath": "/Users/ehsanahmad/Documents/dotnet/TMS/TMS/TMS.csproj",
-        "packagesPath": "/Users/ehsanahmad/.nuget/packages/",
-        "outputPath": "/Users/ehsanahmad/Documents/dotnet/TMS/TMS/obj/",
+        "projectPath": "/Users/ehsanahmad375/Documents/dotnet/TMS_backend_dotnet/TMS.csproj",
+        "packagesPath": "/Users/ehsanahmad375/.nuget/packages/",
+        "outputPath": "/Users/ehsanahmad375/Documents/dotnet/TMS_backend_dotnet/obj/",
         "projectStyle": "PackageReference",
         "configFilePaths": [
-          "/Users/ehsanahmad/.nuget/NuGet/NuGet.Config"
+          "/Users/ehsanahmad375/.nuget/NuGet/NuGet.Config"
         ],
         "originalTargetFrameworks": [
           "net9.0"
@@ -102,7 +102,7 @@
               "privateAssets": "all"
             }
           },
-          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.305/PortableRuntimeIdentifierGraph.json"
+          "runtimeIdentifierGraphPath": "/usr/local/share/dotnet/sdk/9.0.313/PortableRuntimeIdentifierGraph.json"
         }
       }
     }

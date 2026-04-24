@@ -29,7 +29,8 @@ builder.Services.AddDbContext<AppDbContext>(options =>
 {
     if (!string.IsNullOrEmpty(connectionString))
     {
-        var serverVersion = ServerVersion.AutoDetect(connectionString);
+        // var serverVersion = ServerVersion.AutoDetect(connectionString);
+        var serverVersion = new MySqlServerVersion(new Version(8, 0, 30));
         options.UseMySql(connectionString, serverVersion, mysqlOptions => 
             mysqlOptions.EnableRetryOnFailure(
                 maxRetryCount: 10,
