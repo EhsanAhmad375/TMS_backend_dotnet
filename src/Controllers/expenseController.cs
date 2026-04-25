@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using System.Globalization;
 
 namespace TMS.src
 {
@@ -122,17 +123,35 @@ namespace TMS.src
 
 
         [HttpGet("get-financial-report")]
-        public async Task<IActionResult> GetMonthlyFinanceReport([FromQuery] int year, [FromQuery] int month)
+        public async Task<IActionResult> GetMonthlyFinanceReport([FromQuery] int year, [FromQuery] int? month, [FromQuery] int? date)
         {
-            // Basic validation taake ghalat month na aaye
-            if (month < 1 || month > 12)
+            // Basic validation taake ghalat values na aaye
+            if (month.HasValue && (month.Value < 1 || month.Value > 12))
             {
                 return BadRequest(new { success = false, message = "Invalid month. Please provide a value between 1 and 12." });
             }
 
+            if (date.HasValue)
+            {
+                if (!month.HasValue)
+                {
+                    return BadRequest(new { success = false, message = "Month is required when filtering by date." });
+                }
+
+                if (date.Value < 1 || date.Value > 31)
+                {
+                    return BadRequest(new { success = false, message = "Invalid date. Please provide a value between 1 and 31." });
+                }
+
+                if (!DateTime.TryParseExact($"{date.Value:D2}-{month.Value:D2}-{year}", "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out _))
+                {
+                    return BadRequest(new { success = false, message = "Invalid date for the selected month/year." });
+                }
+            }
+
             try
             {
-                var report = await _expenseService.GetFinanceReport(year, month);
+                var report = await _expenseService.GetFinanceReport(year, month, date);
                 
                 return Ok(new 
                 { 

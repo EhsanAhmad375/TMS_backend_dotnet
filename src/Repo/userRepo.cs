@@ -7,11 +7,11 @@ namespace TMS.src
     public interface IUserRepo
     {
         Task SaveChangesAsync();
-        Task<UserModel> GetUserByEmail(string email); 
-        Task<UserModel> GetUserById(int id);
-        Task<UserModel> GetUserByNumber(string number);
+        Task<UserModel?> GetUserByEmail(string email); 
+        Task<UserModel?> GetUserById(int id);
+        Task<UserModel?> GetUserByNumber(string number);
         Task<UserModel> PostRegister(UserModel userModel);
-        Task<UserModel> GetUserProfile(int userId);
+        Task<UserModel?> GetUserProfile(int userId);
         IQueryable<UserModel> GetAllUsers();
         
 
@@ -78,10 +78,9 @@ namespace TMS.src
             return users;   
         }
 
-        public Task<UserModel> GetUserProfile(int userId)
+        public Task<UserModel?> GetUserProfile(int userId)
         {
-            var user=GetUserById(userId);
-            return user;
+            return GetUserById(userId);
         }
 
     }

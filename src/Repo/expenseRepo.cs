@@ -12,7 +12,9 @@ namespace TMS.src
         public IQueryable<ExpenseModel> getAllExpenseList();
         public IQueryable<ExpenseModel> getExpenseListByTripId(int tripId);
         Task<bool> addExpenseRepo(AddExpenseDTO addExpenseDTO,string imagePath);
+        Task<List<TripModel>> getAllTrips();
         Task saveChangesAsync();
+        
     }
     public class ExpenseRepo :IExpenseRepo
     {
@@ -69,7 +71,11 @@ namespace TMS.src
              await saveChangesAsync();
              return true;
         }
-  
+
+         public async Task<List<TripModel>> getAllTrips()
+    {
+        return await _appDbContext.trips.ToListAsync();
+    }
   
   
     }
