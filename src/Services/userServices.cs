@@ -76,6 +76,7 @@ namespace TMS.src
 
 
 
+     
         public async Task<GetUserLoginDetails> userLoginService(UserLoginDTO userLoginDTO)
         {
              var user=await _userRepo.GetUserByEmail(userLoginDTO.userName);
@@ -105,6 +106,7 @@ namespace TMS.src
                 role=user.role,
                 is_active=user.is_active,
                 is_available=user.is_available,
+                tripId=user.current_assigned_tripId,
                 token=generatedToken
             };
             return userDetail;
@@ -173,7 +175,8 @@ namespace TMS.src
                 role=user.role,
                 is_active=user.is_active,
                 is_available=user.is_available,
-                rating=0,
+                rating=user.rating,
+                tripId=user.current_assigned_tripId,
                 join_date=user.created_at.ToString("yyyy-MM-dd"),
                 total_trips=_tripRepo.getAllTripCountByDriverIdRepo(user.userId),
                 cnic_status=user.is_verified??"not verified",
@@ -181,6 +184,7 @@ namespace TMS.src
             };
             return userProfile;
         }
+        
 
     }
 }

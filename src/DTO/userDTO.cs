@@ -46,6 +46,7 @@ namespace TMS.src
         public string? role{get;set;}
         public bool? is_active{get;set;}=false;
         public bool? is_available{get;set;}=false;
+        public int? tripId{get;set;}
         public string? token{get;set;}
         
     }
@@ -79,6 +80,7 @@ namespace TMS.src
         public string? emergency_contact{get;set;}
         public string? address{get;set;}
         public string? role{get;set;}
+        public int? tripId{get;set;}
         public bool? is_active{get;set;}=false;
         public bool? is_available{get;set;}=false;
         public double? rating{get;set;}

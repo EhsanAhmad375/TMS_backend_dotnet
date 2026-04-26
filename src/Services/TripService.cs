@@ -92,6 +92,28 @@ public async Task<TripModel> createTripService(CreateTripDTO createTrip)
                 await _incomeRepo.createIncomeRepo(income);                
             }
 
+            // 3. Update driver and co-driver assigned trip id
+            if (savedTrip.driver_id.HasValue)
+            {
+                var driver = await _context.users.FindAsync(savedTrip.driver_id.Value);
+                if (driver != null)
+                {
+                    driver.current_assigned_tripId = savedTrip.tripId;
+                    _context.users.Update(driver);
+                }
+            }
+
+            if (savedTrip.co_driver_id.HasValue)
+            {
+                var coDriver = await _context.users.FindAsync(savedTrip.co_driver_id.Value);
+                if (coDriver != null)
+                {
+                    coDriver.current_assigned_tripId = savedTrip.tripId;
+                    _context.users.Update(coDriver);
+                }
+            }
+
+            await _context.SaveChangesAsync();
             await transaction.CommitAsync();
             return savedTrip;
         } 

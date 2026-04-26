@@ -1,3 +1,4 @@
+using System.ComponentModel.DataAnnotations.Schema;
 using System.ComponentModel.DataAnnotations;
 
 namespace TMS.src
@@ -24,6 +25,9 @@ namespace TMS.src
         public string? license_number {get;set;}
         public string? address {get;set;}
         public string? emergency_contact {get;set;}
+        public double? rating {get;set;}
+
+        public int ?current_assigned_tripId{get;set;}
         public int ?experience_years{get;set;}
         public int ?status{get;set;}
         public int ?assigned_truck_id{get;set;}

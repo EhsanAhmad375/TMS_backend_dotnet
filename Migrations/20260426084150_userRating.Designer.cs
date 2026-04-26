@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using TMS.src.Data;
 
@@ -11,9 +12,11 @@ using TMS.src.Data;
 namespace TMS.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    partial class AppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20260426084150_userRating")]
+    partial class userRating
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -421,9 +424,6 @@ namespace TMS.Migrations
 
                     b.Property<DateTime>("created_at")
                         .HasColumnType("datetime(6)");
-
-                    b.Property<int?>("current_assigned_tripId")
-                        .HasColumnType("int");
 
                     b.Property<string>("device_token")
                         .HasColumnType("longtext");
