@@ -18,6 +18,8 @@ namespace TMS.src
 
         Task<List<TripStatus>> getAllTripStatus();
 
+        Task<bool> deleteTripById(int id);
+
         Task<bool> UpdateTripStatusService(int tripId, int statusId);
 
         Task<bool> addTripLocationService(addCurrentLocationDTO addCurrentLocationDTO);
@@ -36,15 +38,15 @@ namespace TMS.src
             _incomeRepo=incomeRepo;
             _context = context; 
         }
-public async Task<TripModel> createTripService(CreateTripDTO createTrip)
-{
-    if (_context == null) throw new Exception("Database context is not initialized.");
+        public async Task<TripModel> createTripService(CreateTripDTO createTrip)
+        {
+        if (_context == null) throw new Exception("Database context is not initialized.");
 
-    // Define the strategy for MySQL retries
-    var strategy = _context.Database.CreateExecutionStrategy();
+        // Define the strategy for MySQL retries
+        var strategy = _context.Database.CreateExecutionStrategy();
 
-    return await strategy.ExecuteAsync(async () =>
-    {
+        return await strategy.ExecuteAsync(async () =>
+        {
         // Start transaction INSIDE the execution strategy
         using var transaction = await _context.Database.BeginTransactionAsync();
 
@@ -126,13 +128,13 @@ public async Task<TripModel> createTripService(CreateTripDTO createTrip)
             }
             throw; 
         }
-    });
-}
+        });
+        }
 
 
-    public async Task<List<GetAllTripsDTO>> getAllTripService(string? type,string? truckId,string? driverId,string? date)
-{
-    var query =  _tripRepo.getAllTripRepo();
+        public async Task<List<GetAllTripsDTO>> getAllTripService(string? type,string? truckId,string? driverId,string? date)
+        {
+        var query =  _tripRepo.getAllTripRepo();
 
             if (!string.IsNullOrEmpty(type))
             {
@@ -152,8 +154,8 @@ public async Task<TripModel> createTripService(CreateTripDTO createTrip)
             }
 
 
-    var trips = query.Select(t => new GetAllTripsDTO
-    {
+         var trips = query.Select(t => new GetAllTripsDTO
+        {
         tripId = t.tripId,
         pickupPoint = t.pickup_location,
         destination = t.destination,
@@ -179,26 +181,26 @@ public async Task<TripModel> createTripService(CreateTripDTO createTrip)
             sub_status = t.truck.sub_status,
         } : null
 
-    }).ToList();
+        }).ToList();
 
-    return trips; 
-}
+        return trips; 
+        }
    
 
-  public async Task<getTripDetailsByIdDTO> getTripDetailsById(int id)
-{
-    var trip = await _tripRepo.getTripByIdRepo(id);
-    if (trip == null)
-    {
+        public async Task<getTripDetailsByIdDTO> getTripDetailsById(int id)
+        {
+        var trip = await _tripRepo.getTripByIdRepo(id);
+        if (trip == null)
+        {
         throw new ApiException("message", $"this trip id: {id} is not exist");
-    }
+        }
 
-    var expenses = _expenseRepo.getExpenseListByTripId(trip.tripId) ;
-    var totalExpense = expenses.Sum(e => e.amount);
-    var remainingAllowance = trip.allowance - totalExpense;
+        var expenses = _expenseRepo.getExpenseListByTripId(trip.tripId) ;
+        var totalExpense = expenses.Sum(e => e.amount);
+        var remainingAllowance = trip.allowance - totalExpense;
 
-    var tripDetail = new getTripDetailsByIdDTO
-    {
+        var tripDetail = new getTripDetailsByIdDTO
+        {
         trip_id = trip.tripId,
         // FIX 1: Added ?. and ?? for status
         status = trip.tripStatus?.statusName ?? "Unknown", 
@@ -278,16 +280,16 @@ public async Task<TripModel> createTripService(CreateTripDTO createTrip)
         }).ToList(),
 
         createdAt = trip.created_at
-    };
+        };
 
-    return tripDetail;
-}
+        return tripDetail;
+        }
  
     
     
     
    
-    public async Task<List<TripStatus>> getAllTripStatus()
+        public async Task<List<TripStatus>> getAllTripStatus()
         {
         var tripStatus= await _tripRepo.getAllTripStatusRepo().ToListAsync();
         return tripStatus;
@@ -295,7 +297,7 @@ public async Task<TripModel> createTripService(CreateTripDTO createTrip)
         }
     
     
-    public async Task<bool> UpdateTripStatusService(int tripId, int statusId)
+         public async Task<bool> UpdateTripStatusService(int tripId, int statusId)
         {
             await _tripRepo.UpdateTripStatusRepo(tripId,statusId);
 
@@ -304,12 +306,21 @@ public async Task<TripModel> createTripService(CreateTripDTO createTrip)
         }
 
 
-    public async Task<bool> addTripLocationService(addCurrentLocationDTO addCurrentLocationDTO)
-    {
+        public async Task<bool> addTripLocationService(addCurrentLocationDTO addCurrentLocationDTO)
+        {
         await _tripRepo.UpdateTruckCurrentLocation(addCurrentLocationDTO.tripId.Value, addCurrentLocationDTO.current_lat, addCurrentLocationDTO.current_long);
         return true;
     
-    }
+        }
+        public async Task<bool> deleteTripById(int id)
+        {
+        var result = await _tripRepo.deleteTripByIdRepo(id);
+        return result;
+        } 
     
-    }
+        }
+        
+
+
+
 }

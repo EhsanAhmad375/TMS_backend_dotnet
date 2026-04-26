@@ -138,7 +138,24 @@ namespace TMS.src
             {                return StatusCode(500, new {success=false,message="internal server error",error=ex.Message});
             }}
  
- 
-
-    }
-}
+    [HttpDelete("delete-trip/{id}")]
+    public async Task<ActionResult> deleteTrip([FromRoute] int id)
+    {
+        try
+        {
+            var isDeleted = await _tripService.deleteTripById(id);
+            if (isDeleted)
+            {
+                return StatusCode(200, new { success = true, message = "Trip deleted successfully" });
+            }
+            else 
+            {
+                return StatusCode(404, new { success = false, message = "Trip not found" });
+            }
+        } 
+        catch (Exception ex)
+        {            
+            return StatusCode(500, new { success = false, message = "Internal server error", error = ex.Message });
+        }
+    } 
+}}

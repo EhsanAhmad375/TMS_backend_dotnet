@@ -10,6 +10,7 @@ namespace TMS.src
         Task<TruckModel> createTruckRepo(TruckModel truck);
         IQueryable<TruckModel> getAllTruckRepo();
         Task<TruckModel> getTruckByIdRepo(int id);
+        Task<bool> deleteTruckByIdRepo(int id);
         Task<TruckModel> getTruckByNumberPlateRepo(string number_plate);
         
         Task saveChnagesRepo();
@@ -59,6 +60,17 @@ namespace TMS.src
         public  IQueryable<TruckModel> getAllTruckRepo()
         {
             return  _appDbContext.trucks.Include(t=>t.driver);
+        }
+
+
+        public async Task<bool> deleteTruckByIdRepo(int id){
+            var truck = await getTruckByIdRepo(id);
+            if(truck == null){
+                return false;
+            }
+            _appDbContext.trucks.Remove(truck);
+            await saveChnagesRepo();
+            return true;
         }
     }
 }

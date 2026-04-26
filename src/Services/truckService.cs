@@ -13,6 +13,7 @@ namespace TMS.src
         Task<TruckCreatedDTO> createTruckService(CreateTruckDTO createTruckDTO);
         Task<List<TruckListDTO>> GetAllTruckListService();
         Task<TruckDetailsDTO> getTruckByIdService(int id);
+        Task<bool> deleteTruckByIdService(int id);
         // Task<TruckModel> getTruckByNumberPlateService(string number_plate);
     }
 
@@ -149,6 +150,12 @@ namespace TMS.src
                 updated_at=truck.updated_at,
             };
             return truckDetails;
+        }
+
+        public async Task<bool> deleteTruckByIdService(int id)
+        {
+            var result = await _truckRepo.deleteTruckByIdRepo(id);
+            return result;
         }
   
   

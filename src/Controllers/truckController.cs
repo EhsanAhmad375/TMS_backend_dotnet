@@ -76,15 +76,43 @@ namespace TMS.src
             message = "Internal server error", 
             error = e.Message 
         });
+        }
+        }
+
+
+
+
+        [HttpDelete("delete-truck/{id}")]
+        public async Task<IActionResult> deleteTruckById([FromRoute] int id)
+        {
+            try
+            {
+                var result = await _truckService.deleteTruckByIdService(id);
+                if (result)
+                {
+                    return Ok(new { success = true, message = "Truck deleted successfully" });
+                }
+                else
+                {
+                    return NotFound(new { success = false, message = "Truck not found" });
+                }
+            }
+            catch (Exception e)
+            {
+                return StatusCode(500, new { success = false, message = "Internal server error", error = e.Message });
+            }}}
+
+
+
+
+
+
+
+
+    
+    
+    
+    
+    
     }
-}
-
-
-
-
-
-
-
-
-    }
-}
+ 

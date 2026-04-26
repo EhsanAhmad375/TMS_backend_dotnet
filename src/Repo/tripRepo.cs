@@ -12,7 +12,7 @@ namespace TMS.src
         int getAllTripCountByDriverIdRepo(int driverId);
         Task<TripModel> getTripByIdRepo(int id);
         Task UpdateTruckCurrentLocation(int tripId, string lat, string lng);
-
+        Task<bool> deleteTripByIdRepo(int id);
         IQueryable<TripStatus> getAllTripStatusRepo();
         Task UpdateTripStatusRepo(int tripId, int statusId);
         Task SaveTripChanges();
@@ -119,6 +119,45 @@ namespace TMS.src
                 trip.TripStatusId = statusId;
                 await SaveTripChanges();
             }
+        }
+
+        public async Task<bool> deleteTripByIdRepo(int id){
+            var trip = await getTripByIdRepo(id);
+            if(trip == null){
+                return false;
+            }
+
+            // Remove child expenses and incomes first to avoid FK constraint failures
+            var expenses = _appDbContext.expenses.Where(e => e.trip_id == id);
+            _appDbContext.expenses.RemoveRange(expenses);
+
+            var incomes = _appDbContext.Incomes.Where(i => i.trip_id == id);
+            _appDbContext.Incomes.RemoveRange(incomes);
+
+            // Reset current assigned trip for driver and co-driver if they still exist
+            if (trip.driver_id.HasValue)
+            {
+                var driver = await _appDbContext.users.FindAsync(trip.driver_id.Value);
+                if (driver != null && driver.current_assigned_tripId == id)
+                {
+                    driver.current_assigned_tripId = null;
+                    _appDbContext.users.Update(driver);
+                }
+            }
+
+            if (trip.co_driver_id.HasValue)
+            {
+                var coDriver = await _appDbContext.users.FindAsync(trip.co_driver_id.Value);
+                if (coDriver != null && coDriver.current_assigned_tripId == id)
+                {
+                    coDriver.current_assigned_tripId = null;
+                    _appDbContext.users.Update(coDriver);
+                }
+            }
+
+            _appDbContext.trips.Remove(trip);
+            await SaveTripChanges();
+            return true;
         }
 
 
