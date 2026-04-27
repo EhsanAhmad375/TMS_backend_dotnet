@@ -13,11 +13,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("TMS")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-<<<<<<< HEAD
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+f1fc0c50d14c6d593c210b50e1f30342ed6ae952")]
-=======
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2458d18d8e29057a44527c6ddeebbc8fdb3e1fb5")]
->>>>>>> temp-fix
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+fe8b9902fc96fc33989a9a252ab5ac52abcc8bfa")]
 [assembly: System.Reflection.AssemblyProductAttribute("TMS")]
 [assembly: System.Reflection.AssemblyTitleAttribute("TMS")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
