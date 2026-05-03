@@ -1,4 +1,5 @@
 {
+  "version": 2,
   "builds": [
     {
       "src": "*.csproj",
@@ -6,6 +7,10 @@
     }
   ],
   "routes": [
+    {
+      "src": "/swagger/(.*)",
+      "dest": "/swagger/$1"
+    },
     {
       "src": "/(.*)",
       "dest": "/"
