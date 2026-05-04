@@ -85,17 +85,21 @@ namespace TMS.src
             // {
             //     user=await _userRepo.GetUserByNumber(userLoginDTO.userName);
             // }
+            
 
             if (user == null)
             {
                 throw new ApiException("email","invalid email address or Phone number ");
             }
+            
             var isPasswordValid=BCrypt.Net.BCrypt.Verify(userLoginDTO.password,user.password);
             if (!isPasswordValid)
             {
                 throw new ApiException("password","invalid your password");
             }
             var generatedToken = GenerateJwtToken(user);
+
+            var trip=await _tripRepo.getCurrentAssignedTripByDriverId(user!.userId);
 
             var userDetail=new GetUserLoginDetails
             {
@@ -106,7 +110,7 @@ namespace TMS.src
                 role=user.role,
                 is_active=user.is_active,
                 is_available=user.is_available,
-                tripId=user.current_assigned_tripId,
+                tripId=trip,
                 token=generatedToken
             };
             return userDetail;
@@ -169,6 +173,7 @@ namespace TMS.src
                 f_name=user.f_Name,
                 L_name=user.l_Name,
                 email=user.email,
+                profile_image=user.profile_image,
                 contact=user.phone_no,
                 emergency_contact=user.emergency_contact,
                 address=user.address,

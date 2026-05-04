@@ -36,11 +36,11 @@ namespace TMS.src
         }
 
         [HttpGet("get-trip-list")]
-        public async Task<IActionResult> getAllTripController([FromQuery] string? type,[FromQuery] string? status,[FromQuery] string? truckId,[FromQuery] string? driverId,[FromQuery] string? date)
+        public async Task<IActionResult> getAllTripController([FromQuery] string? type,[FromQuery] string? status,[FromQuery] string? truckId,[FromQuery] string? driverId,[FromQuery] string? date,string? clientName)
         {
             try
             {
-                var trip=await _tripService.getAllTripService(type,truckId,driverId,date);
+                var trip=await _tripService.getAllTripService(type,truckId,driverId,date,clientName);
                 return StatusCode(200,new{success=true,message="All trip retrive successfully",data=trip});
                 
             }catch(Exception ex)

@@ -33,7 +33,8 @@ namespace TMS.src
     public class GetAllTripsDTO
     {
         public int tripId{get;set;}
-
+        public string? scheduled_date{get;set;}
+        public string? client_name{get;set;}
         public string? pickupPoint{get;set;}
         public string? destination{get;set;}
         public string? type{get;set;}

@@ -123,145 +123,140 @@ namespace TMS.src
             return expendData;
         }
 
-        public async Task<Finance> GetFinanceReport(int year, int? month, int? date)
+
+
+    public async Task<Finance> GetFinanceReport(int year, int? month, int? date)
+{
+    // 1. Fetching Data
+    var allExpenses = await _expenseRepo.getAllExpenseList().ToListAsync();
+    var categories = await _expenseRepo.getAllExpenseCategories().ToListAsync();
+    var allIncomes = await _incomeRepo.getAllIncomeRepo().ToListAsync();
+    var allTrips = await _tripRepo.getAllTripRepo().ToListAsync();
+
+    // 2. Determine Filter Mode
+    // Logic: If date is passed, it's Daily. If only month is passed, it's Monthly. Otherwise Yearly.
+    bool isDaily = date.HasValue;
+    bool isMonthly = !date.HasValue && month.HasValue;
+    bool isYearly = !date.HasValue && !month.HasValue;
+
+    DateTime selectedPeriodStart;
+    DateTime previousPeriodStart;
+
+    // 3. Set up Date Ranges
+    if (isDaily)
+    {
+        // Fallback to current month if null to prevent errors, though frontend should send both
+        int m = month ?? DateTime.Now.Month;
+        selectedPeriodStart = new DateTime(year, m, date.Value);
+        previousPeriodStart = selectedPeriodStart.AddDays(-1);
+    }
+    else if (isMonthly)
+    {
+        selectedPeriodStart = new DateTime(year, month.Value, 1);
+        previousPeriodStart = selectedPeriodStart.AddMonths(-1);
+    }
+    else
+    {
+        selectedPeriodStart = new DateTime(year, 1, 1);
+        previousPeriodStart = selectedPeriodStart.AddYears(-1);
+    }
+
+    // 4. Helper methods for Period Checking
+    bool IsInSelectedPeriod(DateTime dt)
+    {
+        if (isDaily) return dt.Date == selectedPeriodStart.Date;
+        if (isMonthly) return dt.Year == selectedPeriodStart.Year && dt.Month == selectedPeriodStart.Month;
+        return dt.Year == selectedPeriodStart.Year;
+    }
+
+    bool IsInPreviousPeriod(DateTime dt)
+    {
+        if (isDaily) return dt.Date == previousPeriodStart.Date;
+        if (isMonthly) return dt.Year == previousPeriodStart.Year && dt.Month == previousPeriodStart.Month;
+        return dt.Year == previousPeriodStart.Year;
+    }
+
+    // 5. Process Trips and Parse Dates (Handling variations in "dd-MM-yyyy")
+    // This addresses the "not working smoothly" by handling potential whitespace or single digits
+    var dateFormats = new[] { "dd-MM-yyyy", "d-M-yyyy", "dd/MM/yyyy", "d/M/yyyy" };
+
+    var processedTrips = allTrips
+        .Where(t => !string.IsNullOrWhiteSpace(t.scheduled_date))
+        .Select(t => {
+            bool success = DateTime.TryParseExact(
+                t.scheduled_date.Trim(), 
+                dateFormats, 
+                CultureInfo.InvariantCulture, 
+                DateTimeStyles.None, 
+                out DateTime parsedDate);
+            return new { t.tripId, ScheduledDate = success ? parsedDate : (DateTime?)null };
+        })
+        .Where(x => x.ScheduledDate.HasValue)
+        .ToList();
+
+    // 6. Identify IDs for Selected and Previous Periods
+    var selectedTripIds = processedTrips
+        .Where(x => IsInSelectedPeriod(x.ScheduledDate.Value))
+        .Select(x => x.tripId)
+        .ToHashSet();
+
+    var previousTripIds = processedTrips
+        .Where(x => IsInPreviousPeriod(x.ScheduledDate.Value))
+        .Select(x => x.tripId)
+        .ToHashSet();
+
+    // 7. Filter Financial Data
+    var filteredEx = allExpenses.Where(e => e.trip_id.HasValue && selectedTripIds.Contains(e.trip_id.Value)).ToList();
+    var previousEx = allExpenses.Where(e => e.trip_id.HasValue && previousTripIds.Contains(e.trip_id.Value)).ToList();
+
+    var filteredIn = allIncomes.Where(i => i.trip_id.HasValue && selectedTripIds.Contains(i.trip_id.Value)).ToList();
+    var previousIn = allIncomes.Where(i => i.trip_id.HasValue && previousTripIds.Contains(i.trip_id.Value)).ToList();
+
+    // 8. Calculations
+    double totalExp = filteredEx.Sum(e => e.amount ?? 0);
+    double totalRev = filteredIn.Sum(i => i.total_amount ?? 0);
+    double totalProfit = totalRev - totalExp;
+
+    double previousExp = previousEx.Sum(e => e.amount ?? 0);
+    double previousRev = previousIn.Sum(i => i.total_amount ?? 0);
+    double previousProfit = previousRev - previousExp;
+
+    int profitChangePercentage;
+    string profitTrend;
+
+    if (previousProfit == 0)
+    {
+        profitChangePercentage = totalProfit == 0 ? 0 : 100;
+        profitTrend = totalProfit >= 0 ? "up" : "down";
+    }
+    else
+    {
+        var change = ((totalProfit - previousProfit) / Math.Abs(previousProfit)) * 100.0;
+        profitChangePercentage = (int)Math.Round(Math.Abs(change));
+        profitTrend = change >= 0 ? "up" : "down";
+    }
+
+    // 9. Return Final Object
+    return new Finance
+    {
+        peroid = isDaily ? "daily" : isMonthly ? "monthly" : "yearly",
+        date = isDaily ? $"{selectedPeriodStart:yyyy-MM-dd}" : isMonthly ? $"{selectedPeriodStart:yyyy-MM}" : $"{selectedPeriodStart:yyyy}",
+        summary = new Summary
         {
-            // 1. Fetching Data
-            var allExpenses = await _expenseRepo.getAllExpenseList().ToListAsync();
-            var categories = await _expenseRepo.getAllExpenseCategories().ToListAsync();
-            var allIncomes = await _incomeRepo.getAllIncomeRepo().ToListAsync();
-            
-            // Fetch all trips
-            var allTrips = await _tripRepo.getAllTripRepo().ToListAsync();
+            total_revenue = totalRev,
+            total_expense = totalExp,
+            total_net_profit = totalProfit,
+            profit_change_percentage = profitChangePercentage,
+            profit_trends = profitTrend
+        },
+        expense_breakdown = filteredEx
+            .GroupBy(e => e.e_c_id)
+            .ToDictionary(
+                g => categories.FirstOrDefault(c => c.id == g.Key)?.name?.ToLower() ?? "others",
+                g => g.Sum(e => e.amount ?? 0)
+            )
+    };
+}
 
-            bool isDaily = date.HasValue && month.HasValue;
-            bool isMonthly = !date.HasValue && month.HasValue;
-            bool isYearly = !date.HasValue && !month.HasValue;
-
-            DateTime selectedPeriodStart;
-            DateTime previousPeriodStart;
-
-            if (isDaily)
-            {
-                selectedPeriodStart = new DateTime(year, month.Value, date.Value);
-                previousPeriodStart = selectedPeriodStart.AddDays(-1);
-            }
-            else if (isMonthly)
-            {
-                selectedPeriodStart = new DateTime(year, month.Value, 1);
-                previousPeriodStart = selectedPeriodStart.AddMonths(-1);
-            }
-            else
-            {
-                selectedPeriodStart = new DateTime(year, 1, 1);
-                previousPeriodStart = selectedPeriodStart.AddYears(-1);
-            }
-
-            bool IsInSelectedPeriod(DateTime scheduledDate)
-            {
-                if (isDaily)
-                {
-                    return scheduledDate.Date == selectedPeriodStart.Date;
-                }
-                else if (isMonthly)
-                {
-                    return scheduledDate.Year == selectedPeriodStart.Year && scheduledDate.Month == selectedPeriodStart.Month;
-                }
-                else
-                {
-                    return scheduledDate.Year == selectedPeriodStart.Year;
-                }
-            }
-
-            bool IsInPreviousPeriod(DateTime scheduledDate)
-            {
-                if (isDaily)
-                {
-                    return scheduledDate.Date == previousPeriodStart.Date;
-                }
-                else if (isMonthly)
-                {
-                    return scheduledDate.Year == previousPeriodStart.Year && scheduledDate.Month == previousPeriodStart.Month;
-                }
-                else
-                {
-                    return scheduledDate.Year == previousPeriodStart.Year;
-                }
-            }
-
-            var selectedTripIds = allTrips
-                .Where(t => !string.IsNullOrEmpty(t.scheduled_date))
-                .Select(t => new { t.tripId, scheduledDate = DateTime.TryParseExact(t.scheduled_date, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate) ? parsedDate : DateTime.MinValue })
-                .Where(x => x.scheduledDate != DateTime.MinValue)
-                .Where(x => IsInSelectedPeriod(x.scheduledDate))
-                .Select(x => x.tripId)
-                .ToHashSet();
-
-            var previousTripIds = allTrips
-                .Where(t => !string.IsNullOrEmpty(t.scheduled_date))
-                .Select(t => new { t.tripId, scheduledDate = DateTime.TryParseExact(t.scheduled_date, "dd-MM-yyyy", CultureInfo.InvariantCulture, DateTimeStyles.None, out DateTime parsedDate) ? parsedDate : DateTime.MinValue })
-                .Where(x => x.scheduledDate != DateTime.MinValue)
-                .Where(x => IsInPreviousPeriod(x.scheduledDate))
-                .Select(x => x.tripId)
-                .ToHashSet();
-
-            var filteredEx = allExpenses
-                .Where(e => e.trip_id.HasValue && selectedTripIds.Contains(e.trip_id.Value))
-                .ToList();
-
-            var previousEx = allExpenses
-                .Where(e => e.trip_id.HasValue && previousTripIds.Contains(e.trip_id.Value))
-                .ToList();
-
-            var filteredIn = allIncomes
-                .Where(i => i.trip_id.HasValue && selectedTripIds.Contains(i.trip_id.Value))
-                .ToList();
-
-            var previousIn = allIncomes
-                .Where(i => i.trip_id.HasValue && previousTripIds.Contains(i.trip_id.Value))
-                .ToList();
-
-            double totalExp = filteredEx.Sum(e => e.amount ?? 0);
-            double totalRev = filteredIn.Sum(i => i.total_amount ?? 0);
-            double totalProfit = totalRev - totalExp;
-
-            double previousExp = previousEx.Sum(e => e.amount ?? 0);
-            double previousRev = previousIn.Sum(i => i.total_amount ?? 0);
-            double previousProfit = previousRev - previousExp;
-
-            int profitChangePercentage;
-            string profitTrend;
-
-            if (previousProfit == 0)
-            {
-                profitChangePercentage = totalProfit == 0 ? 0 : 100;
-                profitTrend = totalProfit >= 0 ? "up" : "down";
-            }
-            else
-            {
-                var change = ((totalProfit - previousProfit) / Math.Abs(previousProfit)) * 100.0;
-                profitChangePercentage = (int)Math.Round(Math.Abs(change));
-                profitTrend = change >= 0 ? "up" : "down";
-            }
-
-            return new Finance
-            {
-                peroid = isDaily ? "daily" : isMonthly ? "monthly" : "yearly",
-                date = isDaily ? $"{selectedPeriodStart:yyyy-MM-dd}" : isMonthly ? $"{selectedPeriodStart:yyyy-MM}" : $"{selectedPeriodStart:yyyy}",
-                summary = new Summary
-                {
-                    total_revenue = totalRev,
-                    total_expense = totalExp,
-                    total_net_profit = totalProfit,
-                    profit_change_percentage = profitChangePercentage,
-                    profit_trends = profitTrend
-                },
-                expense_breakdown = filteredEx
-                    .GroupBy(e => e.e_c_id)
-                    .ToDictionary(
-                        g => categories.FirstOrDefault(c => c.id == g.Key)?.name?.ToLower() ?? "others",
-                        g => g.Sum(e => e.amount ?? 0)
-                    )
-            };
-        }
     }
 }

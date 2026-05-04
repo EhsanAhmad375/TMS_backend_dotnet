@@ -1,7 +1,7 @@
 using Microsoft.AspNetCore;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-
+using Microsoft.AspNetCore.Authorization;
 namespace TMS.src
 {
     [Route("api/[controller]")]
@@ -18,7 +18,7 @@ namespace TMS.src
 
 
 
-
+        
         [HttpGet("get-dashboard")]
         public async Task<ActionResult> getDashboard([FromQuery] string? date)
         {

@@ -13,7 +13,7 @@ namespace TMS.src
     {
         Task<TripModel> createTripService(CreateTripDTO createTrip);
 
-        Task<List<GetAllTripsDTO>> getAllTripService(string? type,string? truckId,string? driverId,string? date);
+        Task<List<GetAllTripsDTO>> getAllTripService(string? type,string? truckId,string? driverId,string? date,string? clientName);
         Task<getTripDetailsByIdDTO> getTripDetailsById(int id);
 
         Task<List<TripStatus>> getAllTripStatus();
@@ -132,7 +132,7 @@ namespace TMS.src
         }
 
 
-        public async Task<List<GetAllTripsDTO>> getAllTripService(string? type,string? truckId,string? driverId,string? date)
+        public async Task<List<GetAllTripsDTO>> getAllTripService(string? type,string? truckId,string? driverId,string? date,string? clientName)
         {
         var query =  _tripRepo.getAllTripRepo();
 
@@ -152,16 +152,22 @@ namespace TMS.src
             {
                 query=query.Where(q=>q.scheduled_date==date);
             }
+            if (!string.IsNullOrEmpty(clientName))
+            {
+                query=query.Where(q=>q.client_Name!.Contains(clientName));
+            }
 
 
          var trips = query.Select(t => new GetAllTripsDTO
         {
         tripId = t.tripId,
+        client_name = t.client_Name,
         pickupPoint = t.pickup_location,
         destination = t.destination,
         allowance = t.allowance,
         type = t.trip_type,
         status=t.tripStatus!.statusName,
+        scheduled_date = t.scheduled_date,
         driver = t.driver != null ? new GetUserRegisterDTo
         {
             userId = t.driver.userId,

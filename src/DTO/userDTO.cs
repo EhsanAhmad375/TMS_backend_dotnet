@@ -76,6 +76,7 @@ namespace TMS.src
         public string? f_name{get;set;}
         public string? L_name{get;set;}
         public string? email{get;set;}
+        public string? profile_image{get;set;}
         public string? contact{get;set;}
         public string? emergency_contact{get;set;}
         public string? address{get;set;}

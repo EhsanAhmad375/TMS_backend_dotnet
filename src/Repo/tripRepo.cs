@@ -15,6 +15,7 @@ namespace TMS.src
         Task<bool> deleteTripByIdRepo(int id);
         IQueryable<TripStatus> getAllTripStatusRepo();
         Task UpdateTripStatusRepo(int tripId, int statusId);
+        Task<int> getCurrentAssignedTripByDriverId(int driverId);
         Task SaveTripChanges();
 
     }
@@ -158,6 +159,12 @@ namespace TMS.src
             _appDbContext.trips.Remove(trip);
             await SaveTripChanges();
             return true;
+        }
+
+        public async Task<int> getCurrentAssignedTripByDriverId(int driverId)
+        {
+            var trip = _appDbContext.trips.FirstOrDefaultAsync(t=>t.driver_id == driverId && (t.TripStatusId != 1||t.TripStatusId != 2||t.TripStatusId != 3));
+            return trip != null ?trip.Result!.tripId:0;
         }
 
 
