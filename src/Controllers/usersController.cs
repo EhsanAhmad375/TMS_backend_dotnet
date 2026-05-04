@@ -93,6 +93,24 @@ namespace TMS.src
             }
         }
 
+
+
+        [HttpPatch("update-user-profile")]
+        public async Task<ActionResult<GetUserProfileDTO>> updateUserProfile([FromForm] UpdateUserProfileDTO dto)
+        {
+            try
+            {
+                var user=await _userService.updateUserProfileService(dto);
+                return StatusCode(200,new {success=true,message="user profile updated successfully",data=user});
+            }catch(ApiException ex)
+            {
+                return StatusCode(400,new {success=false,error=new Dictionary<string,string>{{ex.FieldName,ex.Message}}});
+            }catch(Exception ex)
+            {
+                return StatusCode(500,new {succsee=false,message="internal server error",error=ex.Message});
+            }  
+        }
+
         
     }
 }

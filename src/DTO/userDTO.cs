@@ -64,6 +64,7 @@ namespace TMS.src
         public string? f_name{get;set;}
         public string? L_name{get;set;}
         public string? email{get;set;}
+        public string? user_image{get;set;}
         public string? role{get;set;}
         public bool? is_active{get;set;}=false;
         public bool? is_available{get;set;}=false;
@@ -90,6 +91,21 @@ namespace TMS.src
         public int? total_trips{get;set;}=0;
 
 
+    }
+
+
+
+
+    public class UpdateUserProfileDTO
+    {
+        public int? userId{get;set;}
+        public string? f_name{get;set;}
+        public string? L_name{get;set;}
+        public string? email{get;set;}
+        public IFormFile? profile_image{get;set;}
+        public string? contact{get;set;}
+        public string? emergency_contact{get;set;}
+        public string? address{get;set;}
     }
 
 

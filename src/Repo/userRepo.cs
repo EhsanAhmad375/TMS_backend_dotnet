@@ -13,7 +13,7 @@ namespace TMS.src
         Task<UserModel> PostRegister(UserModel userModel);
         Task<UserModel?> GetUserProfile(int userId);
         IQueryable<UserModel> GetAllUsers();
-        
+        Task<UserModel?> UpdateUserProfile(UpdateUserProfileDTO dto);
 
         
 
@@ -82,6 +82,29 @@ namespace TMS.src
         {
             return GetUserById(userId);
         }
+
+
+
+        public async Task<UserModel?> UpdateUserProfile(UpdateUserProfileDTO dto)
+        {
+            var user=await GetUserById(dto.userId!.Value);
+            if(user==null)
+            {
+                return null;
+            }
+            user.f_Name=dto.f_name??user.f_Name;
+            user.l_Name=dto.L_name??user.l_Name;
+            user.email=dto.email??user.email;
+            user.profile_image=await FileHelper.SaveImage(dto.profile_image,"profile_images")??user.profile_image;
+            user.phone_no=dto.contact??user.phone_no;
+            user.emergency_contact=dto.emergency_contact??user.emergency_contact;
+            user.address=dto.address??user.address;
+
+            await SaveChangesAsync();
+            return user;
+        }
+
+        
 
     }
 }

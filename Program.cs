@@ -85,7 +85,7 @@ var app = builder.Build();
 app.UseCors("AllowAll");
 
 app.UseMiddleware<MyCustomMiddleware>();
-
+app.UseStaticFiles();
 // Swagger (Always ON for testing on Render)
 app.UseSwagger();
 app.UseSwaggerUI(c => {

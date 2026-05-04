@@ -17,6 +17,8 @@ namespace TMS.src
         Task<IEnumerable<GetAllUsersDTO>> getAllUsersService();
         Task<GetUserProfileDTO> getUserProfileService(int userId);
 
+        Task<GetUserProfileDTO> updateUserProfileService(UpdateUserProfileDTO dto);
+
 
     }
     public class UserService
@@ -150,12 +152,12 @@ namespace TMS.src
                 userId=u.userId,
                 f_name=u.f_Name,
                 L_name=u.l_Name,
+                user_image=FileHelper.GetFullImagePath(new DefaultHttpContext().Request,"profile_images",u.profile_image),
                 email=u.email,
                 role=u.role,
                 is_active=u.is_active,
                 is_available=u.is_available
             }).ToListAsync();
-
             return userList;
         }
  
@@ -173,7 +175,7 @@ namespace TMS.src
                 f_name=user.f_Name,
                 L_name=user.l_Name,
                 email=user.email,
-                profile_image=user.profile_image,
+                profile_image=FileHelper.GetFullImagePath(new DefaultHttpContext().Request,"profile_images",user.profile_image),
                 contact=user.phone_no,
                 emergency_contact=user.emergency_contact,
                 address=user.address,
@@ -188,6 +190,38 @@ namespace TMS.src
 
             };
             return userProfile;
+        }
+
+
+
+        public async Task<GetUserProfileDTO> updateUserProfileService(UpdateUserProfileDTO dto)
+        {
+            var updatedUser=await _userRepo.UpdateUserProfile(dto);
+            if(updatedUser==null)
+            {
+                throw new ApiException("message","user not found");
+            }
+            var userProfile=new GetUserProfileDTO
+            {
+                userId=updatedUser.userId,
+                f_name=updatedUser.f_Name,
+                L_name=updatedUser.l_Name,
+                email=updatedUser.email,
+                profile_image=updatedUser.profile_image,
+                contact=updatedUser.phone_no,
+                emergency_contact=updatedUser.emergency_contact,
+                address=updatedUser.address,
+                role=updatedUser.role,
+                is_active=updatedUser.is_active,
+                is_available=updatedUser.is_available,
+                rating=updatedUser.rating,
+                tripId=updatedUser.current_assigned_tripId,
+                join_date=updatedUser.created_at.ToString("yyyy-MM-dd"),
+                total_trips=_tripRepo.getAllTripCountByDriverIdRepo(updatedUser.userId),
+                cnic_status=updatedUser.is_verified??"not verified",
+
+                };
+                return userProfile;
         }
         
 
